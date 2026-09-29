@@ -10,7 +10,7 @@ import time
 # --- પેજ સેટિંગ ---
 st.set_page_config(page_title="AI કૃષિ કવચ", page_icon="🛡️", layout="centered", initial_sidebar_state="collapsed")
 
-# --- પ્રીમિયમ CSS (Android App જેવો લુક અને સ્કેનર એનિમેશન) ---
+# --- પ્રીમિયમ CSS (Android App જેવો લુક) ---
 st.markdown("""
 <style>
 #MainMenu {visibility: hidden;}
@@ -47,14 +47,19 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
 
 .report-greeting { font-size: clamp(20px, 4.5vw, 24px); color: #e65100; font-weight: bold; text-align: center; margin-bottom: 15px; border-bottom: 2px solid #ffe0b2; padding-bottom: 10px; }
 
+/* 🌟 સ્માર્ટ બટન ડેશબોર્ડ ડિઝાઇન 🌟 */
 .action-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 25px; }
-.action-btn { padding: 12px 15px; border-radius: 12px; text-decoration: none !important; font-weight: bold; font-size: clamp(14px, 3vw, 16px); flex: 1 1 180px; text-align: center; color: white !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+.action-btn { padding: 12px 15px; border-radius: 12px; text-decoration: none !important; font-weight: bold; font-size: clamp(14px, 3vw, 16px); flex: 1 1 180px; text-align: center; color: white !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.3s; }
+.action-btn:hover { transform: translateY(-3px); }
 .btn-wa { background: linear-gradient(135deg, #25D366, #128C7E); }
 .btn-yt { background: linear-gradient(135deg, #FF0000, #cc0000); }
+.btn-map { background: linear-gradient(135deg, #4285F4, #0d47a1); }
+.btn-call { background: linear-gradient(135deg, #9C27B0, #6A1B9A); }
+.btn-pm { background: linear-gradient(135deg, #f39c12, #d35400); }
 
 audio { width: 100%; border-radius: 10px; margin-bottom: 15px; }
 
-/* 🌟 સ્કેનર એનિમેશન 🌟 */
+/* સ્કેનર એનિમેશન */
 .scanner-container { position: relative; display: inline-block; overflow: hidden; width: 100%; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 3px solid #4caf50; }
 .scanner-img { width: 100%; display: block; border-radius: 15px; }
 .scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #39ff14; box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14; animation: scan 1.5s infinite linear; }
@@ -180,7 +185,7 @@ if uploaded_files:
         (Provide accurate crop and disease name)
         
         ### ૨. 📊 રોગની અસર (Severity %): 
-        (Provide percentage and brief detail)
+        (Provide percentage. If damage is >= 80%, strongly advise the farmer to apply for 'Pradhan Mantri Fasal Bima Yojana' for compensation).
         
         ### ૩. 🌦️ હવામાન રિપોર્ટ અને દવાની સલાહ ({st.session_state.live_location}):
         (YOU MUST EXACTLY COPY THIS TEXT: {weather_details})
@@ -194,6 +199,9 @@ if uploaded_files:
         ### ૬. 🧮 પંપ અને દવાની ગણતરી: 
         (૧ વીઘા = ૨૪ ગુંઠા માટે અંદાજે ૩ પંપ (15 Liters each) વાપરવા. ખેડૂતને ગણતરી સમજાવો).
         
+        ### ૭. 📞 નિષ્ણાતની સલાહ:
+        જો વધુ માહિતી જોઈતી હોય તો ખેડૂત હેલ્પલાઇન (કિસાન કોલ સેન્ટર) નંબર 1551 પર કૉલ કરી શકો છો.
+        
         [YT_SEARCH: Keyword1, Keyword2] (Provide 1 or 2 organic method names you just suggested, comma separated)
         """
 
@@ -206,7 +214,7 @@ if uploaded_files:
         data = {"contents": [{"parts": contents_parts}]}
         headers = {'Content-Type': 'application/json'}
         
-        # 🟢 લેટેસ્ટ અને અપડેટેડ મોડેલ (જેમ ગૂગલના સર્વર મેસેજમાં માંગ્યું છે તેમ: gemini-3.8-flash)
+        # 🟢 સાચું અને વર્કિંગ મોડેલ (gemini-3.8-flash) 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={API_KEY}"
         
         success = False
@@ -227,9 +235,9 @@ if uploaded_files:
         
         if success:
             text_response = response.json()['candidates'][0]['content']['parts'][0]['text']
-            
             scanner_placeholder.empty()
             
+            # વિડીયોના Keywords અલગ કાઢવા
             yt_keywords = []
             yt_match = re.search(r'\[YT_SEARCH:\s*(.*?)\]', text_response)
             if yt_match:
@@ -237,19 +245,12 @@ if uploaded_files:
                 text_response = re.sub(r'\[YT_SEARCH:\s*.*?\]', '', text_response).strip()
             
             clean_text_for_sharing = re.sub(r'<[^>]+>', '', text_response).strip()
-            whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location})* 🛡️\n\n{clean_text_for_sharing}\n\n"
-            
-            if yt_keywords:
-                whatsapp_msg += "📺 *પ્રાકૃતિક દવા ઘરે બનાવવાના વિડીયો:*\n"
-                for kw in yt_keywords:
-                    yt_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(kw + ' banavvani rit')}"
-                    whatsapp_msg += f"👉 {kw}: {yt_url}\n"
-            whatsapp_msg += "\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
+            whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location})* 🛡️\n\n{clean_text_for_sharing}\n\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
             
             st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
             
             if voice_enabled:
-                audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮]', ' ', clean_text_for_sharing)
+                audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮📞]', ' ', clean_text_for_sharing)
                 audio_text = f"નમસ્કાર ખેડૂત મિત્ર. તમારો રિપોર્ટ આ મુજબ છે: {audio_clean_text}"
                 try:
                     tts = gTTS(text=audio_text, lang=target_lang_code)
@@ -264,9 +265,31 @@ if uploaded_files:
             st.markdown("<div class='report-greeting'>✅ તમારો સ્માર્ટ રિપોર્ટ તૈયાર છે:</div>", unsafe_allow_html=True)
             st.markdown(text_response)
             
+            # 🌟 અલગ અલગ બટન વાળું સ્માર્ટ ડેશબોર્ડ 🌟
+            st.markdown("---")
+            st.markdown("<h4 style='text-align: center; color: #1b5e20;'>🛠️ ખેડૂત હેલ્પલાઇન અને એક્શન ડેશબોર્ડ</h4>", unsafe_allow_html=True)
+            
             html_buttons = '<div class="action-container">'
+            
+            # ૧. WhatsApp બટન
             encoded_msg = urllib.parse.quote(whatsapp_msg)
-            html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp પર રિપોર્ટ અને વિડીયો લિંક શેર કરો</a>'
+            html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp માં રિપોર્ટ મોકલો</a>'
+            
+            # ૨. YouTube બટન (ઓર્ગેનિક દવા શીખવા)
+            for kw in yt_keywords:
+                yt_query = urllib.parse.quote(f"{kw} banavvani rit")
+                html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} બનાવતા શીખો (વિડીયો)</a>'
+            
+            # ૩. નજીકનો એગ્રો સ્ટોર બટન
+            maps_url = "https://www.google.com/maps/search/Agro+center+near+me"
+            html_buttons += f'<a href="{maps_url}" target="_blank" class="action-btn btn-map">📍 નજીકનો એગ્રો સ્ટોર શોધો</a>'
+            
+            # ૪. કિસાન કોલ સેન્ટર બટન
+            html_buttons += f'<a href="tel:1551" class="action-btn btn-call">📞 શું કોલ કરવો છે? 1551 ડાયલ કરો</a>'
+            
+            # ૫. પાક વીમા યોજના બટન
+            html_buttons += f'<a href="https://pmfby.gov.in/" target="_blank" class="action-btn btn-pm">🌾 પાક વીમા યોજના (PMFBY)</a>'
+            
             html_buttons += '</div>'
             st.markdown(html_buttons, unsafe_allow_html=True)
             
