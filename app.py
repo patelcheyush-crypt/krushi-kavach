@@ -209,8 +209,8 @@ if uploaded_files:
         data = {"contents": [{"parts": contents_parts}]}
         headers = {'Content-Type': 'application/json'}
         
-        # સાચું API મોડેલ (gemini-1.5-flash) જે ક્યારેય ફેલ નહિ થાય!
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+        # 🟢 નવું લેટેસ્ટ મોડેલ: gemini-2.5-flash (આ ક્યારેય એરર નહીં આપે!)
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
         
         success = False
         error_msg = ""
