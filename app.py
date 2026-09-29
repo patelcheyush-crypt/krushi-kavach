@@ -19,6 +19,7 @@ header {visibility: hidden;}
 
 .stApp { background-color: #f4f7f6; }
 
+/* ટોપ હેડર */
 .app-header {
     background: linear-gradient(135deg, #1b5e20, #2e7d32);
     padding: 20px;
@@ -31,6 +32,20 @@ header {visibility: hidden;}
 }
 .app-header h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 900; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;}
 .app-header p { font-size: clamp(14px, 3vw, 16px); margin: 5px 0 0 0; opacity: 0.9; }
+
+/* પ્રોજેક્ટ વિગતો માટેનું ખાસ કાર્ડ */
+.info-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    border-top: 5px solid #ff9800;
+    text-align: center;
+}
+.info-title { color: #1b5e20; font-size: clamp(20px, 4vw, 24px); font-weight: 900; margin-bottom: 5px; }
+.info-text { font-size: clamp(14px, 3vw, 16px); color: #424242; margin-bottom: 5px; line-height: 1.5; }
+.info-highlight { color: #e65100; font-weight: bold; font-size: clamp(15px, 3vw, 17px); margin: 10px 0; }
 
 .custom-card {
     background: white;
@@ -93,7 +108,6 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
     padding-bottom: 10px;
 }
 
-/* ચેતવણી બોક્સ (Blinking Warning) */
 .blinking-warning { 
     animation: alert-blink 1s infinite; 
     padding: 15px; border-radius: 10px; 
@@ -107,16 +121,32 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
 .btn-wa { background: linear-gradient(135deg, #25D366, #128C7E); }
 .btn-yt { background: linear-gradient(135deg, #FF0000, #cc0000); }
 .btn-pm { background: linear-gradient(135deg, #f39c12, #d35400); }
-.btn-dl { background: linear-gradient(135deg, #2980b9, #2c3e50); border:none; cursor:pointer;}
 
 audio { width: 100%; border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
+# --- App Header ---
 st.markdown("""
 <div class="app-header">
     <h1>🛡️ AI કૃષિ કવચ</h1>
-    <p>શ્રી ચિત્રાસર પ્રાથમિક શાળા | ખેડૂત મિત્ર 2026</p>
+    <p>પાક, પ્રકૃતિ અને પૈસાનો રક્ષક</p>
+</div>
+""", unsafe_allow_html=True)
+
+# --- વિજ્ઞાન મેળાની વિગતો (નવું આકર્ષક કાર્ડ) ---
+st.markdown("""
+<div class="info-card">
+    <div class="info-title">શ્રી ચિત્રાસર પ્રાથમિક શાળા</div>
+    <div class="info-text">મુ. ચિત્રાસર, તા. ખેડા, જી. ખેડા</div>
+    <div class="info-highlight">નવાગામ ક્લસ્ટર કક્ષાનું વિજ્ઞાન, ગણિત અને પર્યાવરણ પ્રદર્શન : ૨૦૨૬-૨૭</div>
+    <hr style='border: 1px dashed #e0e0e0; margin: 15px 0;'>
+    <div class="info-text"><b>મુખ્ય વિષય:</b> ટકાઉ અને વિકસિત ભારત માટે વિજ્ઞાન, ટેકનોલોજી અને ઈનોવેશન</div>
+    <div class="info-text" style="margin-bottom: 15px;"><b>વિભાગ:</b> 1. (A) બહેતર જીવન માટે આર્ટિફિશિયલ ઇન્ટેલિજન્સ (AI)</div>
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: left; background: #f9fbe7; padding: 15px; border-radius: 10px;">
+        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. અંજલી ગોવિંદભાઈ ભરવાડ</div>
+        <div><b>👨‍🏫 માર્ગદર્શક શિક્ષક:</b><br>ચેયુષભાઈ એન પટેલ</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
