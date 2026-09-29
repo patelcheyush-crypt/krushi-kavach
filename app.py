@@ -134,7 +134,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- વિજ્ઞાન મેળાની વિગતો (નવું આકર્ષક કાર્ડ) ---
+# --- વિજ્ઞાન મેળાની વિગતો ---
 st.markdown("""
 <div class="info-card">
     <div class="info-title">શ્રી ચિત્રાસર પ્રાથમિક શાળા</div>
@@ -144,7 +144,7 @@ st.markdown("""
     <div class="info-text"><b>મુખ્ય વિષય:</b> ટકાઉ અને વિકસિત ભારત માટે વિજ્ઞાન, ટેકનોલોજી અને ઈનોવેશન</div>
     <div class="info-text" style="margin-bottom: 15px;"><b>વિભાગ:</b> 1. (A) બહેતર જીવન માટે આર્ટિફિશિયલ ઇન્ટેલિજન્સ (AI)</div>
     <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: left; background: #f9fbe7; padding: 15px; border-radius: 10px;">
-        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. ડિમ્પલ કાનજીભાઈ ઠાકોર</div>
+        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. અંજલી ગોવિંદભાઈ ભરવાડ</div>
         <div><b>👨‍🏫 માર્ગદર્શક શિક્ષક:</b><br>ચેયુષભાઈ એન પટેલ</div>
     </div>
 </div>
@@ -171,27 +171,38 @@ st.info("💡 શ્રેષ્ઠ નિદાન માટે બે ફો�
 uploaded_files = st.file_uploader("અહીં ક્લિક કરી ફોટો પાડો", type=["jpg", "jpeg", "png"], accept_multiple_files=True, label_visibility="collapsed")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- લોકેશન ---
-st.markdown("<div class='custom-card'><div class='section-title'>📍 ૨. લોકેશન (હવામાનની સલાહ માટે)</div>", unsafe_allow_html=True)
-location_method = st.radio("તમારું લોકેશન કેવી રીતે આપશો?", ["૧. ઑટોમેટિક મારું લાઈવ લોકેશન લો 📍", "૨. પિનકોડ દ્વારા 🔢", "૩. હવામાનની માહિતી નથી જોઈતી ❌"], label_visibility="collapsed")
+# --- લોકેશન અને હવામાન (સુધારેલ માત્ર ૨ ઓપ્શન) ---
+st.markdown("<div class='custom-card'><div class='section-title'>📍 ૨. તમારું લોકેશન (હવામાનની સલાહ માટે)</div>", unsafe_allow_html=True)
 
-search_query_for_weather = "SKIP"
-display_location_name = "લોકેશન આપેલ નથી"
+# અહીં માત્ર 2 જ ઓપ્શન રાખ્યા છે
+location_method = st.radio("લોકેશન કેવી રીતે આપશો?", ["૧. ઑટોમેટિક મારું લાઈવ લોકેશન લો 📍", "૨. પિનકોડ દ્વારા 🔢"], label_visibility="collapsed")
+
+search_query_for_weather = ""
+display_location_name = "અજ્ઞાત"
 
 if location_method.startswith("૧"):
     try:
+        # ઓટોમેટિક લોકેશન માટે API કૉલ
         ip_res = requests.get('http://ip-api.com/json/', timeout=5).json()
         if ip_res['status'] == 'success':
-            search_query_for_weather = ip_res['city']
-            display_location_name = f"Live Location ({ip_res['city']})"
-            st.success(f"✅ લોકેશન સેટ: {ip_res['city']}")
+            city = ip_res.get('city', '')
+            district = ip_res.get('regionName', '')
+            # જો સિટી ન મળે તો જિલ્લો પકડશે
+            search_query_for_weather = city if city else district
+            display_location_name = f"Live Location ({search_query_for_weather})"
+            st.success(f"✅ તમારું લોકેશન સેટ થઈ ગયું છે: {search_query_for_weather}")
+        else:
+            st.warning("⚠️ સિસ્ટમ લોકેશન પકડી શકી નથી, કૃપા કરીને નીચે પિનકોડનો ઉપયોગ કરો.")
     except:
-        st.warning("લોકેશન મળ્યું નહિ, પિનકોડ નો ઉપયોગ કરો.")
+        st.warning("⚠️ ઇન્ટરનેટ એરર: તમારું લોકેશન મળ્યું નથી, પિનકોડ પસંદ કરો.")
+        
 elif location_method.startswith("૨"):
-    pincode = st.text_input("પિનકોડ લખો:", placeholder="દા.ત. 387411", label_visibility="collapsed")
-    if pincode and len(pincode) == 6:
+    pincode = st.text_input("તમારા ગામનો ૬ આંકડાનો પિનકોડ લખો:", placeholder="દા.ત. 387411", label_visibility="collapsed")
+    if pincode and len(pincode) == 6 and pincode.isdigit():
         search_query_for_weather = pincode
         display_location_name = f"પિનકોડ {pincode}"
+        st.success(f"✅ પિનકોડ સેટ થઈ ગયો: {pincode}")
+
 st.markdown("</div>", unsafe_allow_html=True)
 
 # --- પ્રોસેસિંગ ---
@@ -206,10 +217,11 @@ if uploaded_files:
         today_rain = tomorrow_rain = day_after_rain = 0
         weather_data_success = False
         
-        if search_query_for_weather != "SKIP":
+        # જો લોકેશન કે પિનકોડ મળ્યો હોય તો જ હવામાન ચેક કરશે
+        if search_query_for_weather != "":
             try:
                 geo_res = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={search_query_for_weather}&count=1", timeout=5).json()
-                if "results" in geo_res:
+                if "results" in geo_res and len(geo_res["results"]) > 0:
                     lat, lon = geo_res["results"][0]["latitude"], geo_res["results"][0]["longitude"]
                     w_res = requests.get(f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=precipitation_probability_max&timezone=auto&forecast_days=3", timeout=5).json()
                     today_rain, tomorrow_rain, day_after_rain = w_res["daily"]["precipitation_probability_max"][:3]
@@ -225,7 +237,7 @@ if uploaded_files:
             smart_advice = "હાલ વાતાવરણ એકદમ અનુકૂળ છે, તમે દવા છાંટી શકો છો." if max_rain < 50 else "⚠️ ચેતવણી: વરસાદની શક્યતા વધુ હોવાથી આજે દવા છાંટતા નહિ, નહીંતર દવા ધોવાઈ જશે!"
             weather_instruction = f"**૩. 🌦️ હવામાન ({display_location_name}):** આજે {today_rain}%, કાલે {tomorrow_rain}%. **સલાહ:** {smart_advice}"
         else:
-            weather_instruction = "**૩. 🌦️ હવામાન:** માહિતી ઉપલબ્ધ નથી."
+            weather_instruction = "**૩. 🌦️ હવામાન:** લોકેશનની ચોક્કસ માહિતી ન હોવાથી હવામાન ડેટા ઉપલબ્ધ નથી."
 
         smart_prompt = f"""
         Analyze ALL provided crop images. Provide response STRICTLY in {target_lang_name} language. 
