@@ -5,12 +5,11 @@ from gtts import gTTS
 import io
 import urllib.parse
 import re
-import time
 
 # --- પેજ સેટિંગ ---
 st.set_page_config(page_title="AI કૃષિ કવચ", page_icon="🛡️", layout="centered", initial_sidebar_state="collapsed")
 
-# --- પ્રીમિયમ CSS (Android App જેવો લુક) ---
+# --- પ્રીમિયમ CSS ---
 st.markdown("""
 <style>
 #MainMenu {visibility: hidden;}
@@ -33,7 +32,7 @@ header {visibility: hidden;}
 .app-header h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 900; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;}
 .app-header p { font-size: clamp(14px, 3vw, 16px); margin: 5px 0 0 0; opacity: 0.9; }
 
-/* પ્રોજેક્ટ વિગતો માટેનું ખાસ કાર્ડ */
+/* પ્રોજેક્ટ કાર્ડ */
 .info-card {
     background: #ffffff;
     padding: 20px;
@@ -49,7 +48,7 @@ header {visibility: hidden;}
 
 .custom-card {
     background: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.06);
     margin-bottom: 25px;
@@ -78,51 +77,22 @@ div.stButton > button:first-child {
 }
 div.stButton > button:first-child:hover { transform: scale(1.02); }
 
-/* ડિજિટલ પેજ જેવો રિપોર્ટ લુક */
-.report-page {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    font-size: clamp(16px, 3.5vw, 18px);
-    line-height: 1.8;
-    color: #333333;
-    margin-top: 15px;
-    position: relative;
-}
-.report-page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 8px;
-    background: linear-gradient(90deg, #ff9800, #4caf50);
-    border-radius: 12px 12px 0 0;
-}
 .report-greeting {
     font-size: clamp(20px, 4.5vw, 24px);
     color: #e65100;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 2px solid #ffe0b2;
     padding-bottom: 10px;
 }
-
-.blinking-warning { 
-    animation: alert-blink 1s infinite; 
-    padding: 15px; border-radius: 10px; 
-    font-size: clamp(16px, 3.5vw, 20px); font-weight: 900; text-align: center; 
-    margin: 20px 0; box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); border: 2px solid #ff0000; 
-}
-@keyframes alert-blink { 0% { background-color: #fff; color: #f00; } 50% { background-color: #ffeaea; color: #d00; } 100% { background-color: #fff; color: #f00; } }
 
 .action-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 25px; }
 .action-btn { padding: 12px 15px; border-radius: 12px; text-decoration: none !important; font-weight: bold; font-size: clamp(14px, 3vw, 16px); flex: 1 1 180px; text-align: center; color: white !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 .btn-wa { background: linear-gradient(135deg, #25D366, #128C7E); }
 .btn-yt { background: linear-gradient(135deg, #FF0000, #cc0000); }
-.btn-pm { background: linear-gradient(135deg, #f39c12, #d35400); }
 
-audio { width: 100%; border-radius: 10px; }
+audio { width: 100%; border-radius: 10px; margin-bottom: 15px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -156,8 +126,19 @@ except:
     st.error("⚠️ API Key મળતી નથી! સિક્યોરિટી સેટિંગ તપાસો.")
     st.stop()
 
-# --- સેટિંગ્સ ---
-st.markdown("<div class='custom-card'><div class='section-title'>⚙️ ભાષા અને સેટિંગ્સ</div>", unsafe_allow_html=True)
+# --- ઓટોમેટિક લાઈવ લોકેશન (કોઈ બટન વગર) ---
+if 'live_location' not in st.session_state:
+    st.session_state.live_location = "અજ્ઞાત"
+    try:
+        ip_res = requests.get('http://ip-api.com/json/', timeout=3).json()
+        if ip_res['status'] == 'success':
+            st.session_state.live_location = ip_res.get('city', ip_res.get('regionName', 'અજ્ઞાત'))
+    except:
+        pass
+
+# --- સેટિંગ્સ અને લોકેશન ડિસ્પ્લે ---
+st.markdown("<div class='custom-card'><div class='section-title'>⚙️ સેટિંગ્સ અને માહિતી</div>", unsafe_allow_html=True)
+st.success(f"📍 તમારું ઓટોમેટિક લાઈવ લોકેશન: **{st.session_state.live_location}**")
 languages = {"ગુજરાતી (Gujarati)": "gu", "हिंदी (Hindi)": "hi", "मराठी (Marathi)": "mr", "English": "en"}
 selected_lang = st.selectbox("તમારી ભાષા પસંદ કરો:", list(languages.keys()), label_visibility="collapsed")
 target_lang_code = languages[selected_lang]
@@ -166,43 +147,9 @@ voice_enabled = st.toggle("🔊 ઓડિયો રિપોર્ટ (બોલ
 st.markdown("</div>", unsafe_allow_html=True)
 
 # --- ફોટો અપલોડ ---
-st.markdown("<div class='custom-card'><div class='section-title'>📸 ૧. પાકનો ફોટો પાડો</div>", unsafe_allow_html=True)
+st.markdown("<div class='custom-card'><div class='section-title'>📸 પાકનો ફોટો પાડો</div>", unsafe_allow_html=True)
 st.info("💡 શ્રેષ્ઠ નિદાન માટે બે ફોટા પાડો: (૧) બીમાર પાંદડાની નજીકથી અને (૨) આખા છોડનો ફોટો.")
 uploaded_files = st.file_uploader("અહીં ક્લિક કરી ફોટો પાડો", type=["jpg", "jpeg", "png"], accept_multiple_files=True, label_visibility="collapsed")
-st.markdown("</div>", unsafe_allow_html=True)
-
-# --- લોકેશન અને હવામાન (સુધારેલ માત્ર ૨ ઓપ્શન) ---
-st.markdown("<div class='custom-card'><div class='section-title'>📍 ૨. તમારું લોકેશન (હવામાનની સલાહ માટે)</div>", unsafe_allow_html=True)
-
-# અહીં માત્ર 2 જ ઓપ્શન રાખ્યા છે
-location_method = st.radio("લોકેશન કેવી રીતે આપશો?", ["૧. ઑટોમેટિક મારું લાઈવ લોકેશન લો 📍", "૨. પિનકોડ દ્વારા 🔢"], label_visibility="collapsed")
-
-search_query_for_weather = ""
-display_location_name = "અજ્ઞાત"
-
-if location_method.startswith("૧"):
-    try:
-        # ઓટોમેટિક લોકેશન માટે API કૉલ
-        ip_res = requests.get('http://ip-api.com/json/', timeout=5).json()
-        if ip_res['status'] == 'success':
-            city = ip_res.get('city', '')
-            district = ip_res.get('regionName', '')
-            # જો સિટી ન મળે તો જિલ્લો પકડશે
-            search_query_for_weather = city if city else district
-            display_location_name = f"Live Location ({search_query_for_weather})"
-            st.success(f"✅ તમારું લોકેશન સેટ થઈ ગયું છે: {search_query_for_weather}")
-        else:
-            st.warning("⚠️ સિસ્ટમ લોકેશન પકડી શકી નથી, કૃપા કરીને નીચે પિનકોડનો ઉપયોગ કરો.")
-    except:
-        st.warning("⚠️ ઇન્ટરનેટ એરર: તમારું લોકેશન મળ્યું નથી, પિનકોડ પસંદ કરો.")
-        
-elif location_method.startswith("૨"):
-    pincode = st.text_input("તમારા ગામનો ૬ આંકડાનો પિનકોડ લખો:", placeholder="દા.ત. 387411", label_visibility="collapsed")
-    if pincode and len(pincode) == 6 and pincode.isdigit():
-        search_query_for_weather = pincode
-        display_location_name = f"પિનકોડ {pincode}"
-        st.success(f"✅ પિનકોડ સેટ થઈ ગયો: {pincode}")
-
 st.markdown("</div>", unsafe_allow_html=True)
 
 # --- પ્રોસેસિંગ ---
@@ -214,43 +161,60 @@ if uploaded_files:
     st.markdown("</div>", unsafe_allow_html=True)
     
     if st.button("🚀 વિશ્લેષણ કરો (રોગ, માપ અને હવામાન)"):
-        today_rain = tomorrow_rain = day_after_rain = 0
-        weather_data_success = False
+        weather_details = "લોકેશનની ચોક્કસ માહિતી ન હોવાથી હવામાન ડેટા ઉપલબ્ધ નથી."
         
-        # જો લોકેશન કે પિનકોડ મળ્યો હોય તો જ હવામાન ચેક કરશે
-        if search_query_for_weather != "":
+        # હવામાન ડેટા ખેંચવો
+        if st.session_state.live_location != "અજ્ઞાત":
             try:
-                geo_res = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={search_query_for_weather}&count=1", timeout=5).json()
+                geo_res = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={st.session_state.live_location}&count=1", timeout=5).json()
                 if "results" in geo_res and len(geo_res["results"]) > 0:
                     lat, lon = geo_res["results"][0]["latitude"], geo_res["results"][0]["longitude"]
                     w_res = requests.get(f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=precipitation_probability_max&timezone=auto&forecast_days=3", timeout=5).json()
-                    today_rain, tomorrow_rain, day_after_rain = w_res["daily"]["precipitation_probability_max"][:3]
-                    weather_data_success = True
+                    
+                    today = w_res["daily"]["precipitation_probability_max"][0]
+                    tomorrow = w_res["daily"]["precipitation_probability_max"][1]
+                    day_after = w_res["daily"]["precipitation_probability_max"][2]
+                    
+                    max_rain = max(today, tomorrow, day_after)
+                    if max_rain < 40:
+                        advice = "હાલ વાતાવરણ એકદમ અનુકૂળ છે, તમે આજે જ દવાનો છંટકાવ કરી શકો છો."
+                    else:
+                        advice = "⚠️ ચેતવણી: આગામી દિવસોમાં વરસાદની શક્યતા વધુ છે. આજે દવા છાંટતા નહિ, નહીંતર દવા ધોવાઈ જશે અને તમારો ખર્ચ માથે પડશે!"
+                        
+                    weather_details = f"આજે વરસાદની શક્યતા {today}%, આવતીકાલે {tomorrow}%, અને પરમદિવસે {day_after}% છે.\n\n**AI સલાહ:** {advice}"
             except:
                 pass
 
         status_placeholder = st.empty()
-        status_placeholder.info("⏳ AI તમારા ફોટાનું ગહન વિશ્લેષણ કરી રહ્યું છે... કૃપા કરીને રાહ જુઓ.")
+        status_placeholder.info("⏳ AI તમારા ફોટાનું અને હવામાનનું ગહન વિશ્લેષણ કરી રહ્યું છે... કૃપા કરીને રાહ જુઓ.")
         
-        if weather_data_success:
-            max_rain = max(today_rain, tomorrow_rain, day_after_rain)
-            smart_advice = "હાલ વાતાવરણ એકદમ અનુકૂળ છે, તમે દવા છાંટી શકો છો." if max_rain < 50 else "⚠️ ચેતવણી: વરસાદની શક્યતા વધુ હોવાથી આજે દવા છાંટતા નહિ, નહીંતર દવા ધોવાઈ જશે!"
-            weather_instruction = f"**૩. 🌦️ હવામાન ({display_location_name}):** આજે {today_rain}%, કાલે {tomorrow_rain}%. **સલાહ:** {smart_advice}"
-        else:
-            weather_instruction = "**૩. 🌦️ હવામાન:** લોકેશનની ચોક્કસ માહિતી ન હોવાથી હવામાન ડેટા ઉપલબ્ધ નથી."
-
+        # --- સુધારેલ કડક પ્રોમ્પ્ટ (Clear Formatting & Strict Weather) ---
         smart_prompt = f"""
         Analyze ALL provided crop images. Provide response STRICTLY in {target_lang_name} language. 
-        Format beautifully with bullet points.
-        ૧. 🌾 પાક/છોડ અને રોગનું નામ: 
-        ૨. 📊 રોગની અસર (Severity %): 
-        {weather_instruction}
-        ૪. 🚨 તાત્કાલિક પગલાં: WRAP INSIDE HTML TAG: <div class='blinking-warning'> 🚨 તાત્કાલિક પગલાં: [Action time frame] </div>
-        ૫. 💡 ઉપાય અને સચોટ માપ: 
-           - 🌿 પ્રાકૃતિક ઉપાય (૧૫ લિટર પંપ દીઠ સચોટ ગણતરી):
-           - 🧪 રાસાયણિક ઉપાય (૧૫ લિટર પંપ દીઠ સચોટ ગણતરી):
-        ૬. 🧮 જમીન મુજબ પંપ ગણતરી: ૧ વીઘા (૨૪ ગુંઠા) માટે અંદાજે ૩ પંપ.
-        [YT_SEARCH: Keyword1, Keyword2]
+        IMPORTANT FORMATTING RULES: 
+        1. Use proper Markdown Headings (###) for each section.
+        2. Leave a DOUBLE NEWLINE (\\n\\n) after every single section so they do not mix together.
+        3. Explain in clear, simple bullet points.
+        
+        ### ૧. 🌾 પાક અને રોગનું નામ: 
+        (Provide accurate crop and disease name)
+        
+        ### ૨. 📊 રોગની અસર (Severity %): 
+        (Provide percentage and brief detail)
+        
+        ### ૩. 🌦️ હવામાન રિપોર્ટ અને દવાની સલાહ ({st.session_state.live_location}):
+        (YOU MUST EXACTLY COPY THIS TEXT: {weather_details})
+        
+        ### ૪. 🌿 પ્રાકૃતિક / ઓર્ગેનિક ઉપાય (પ્રથમ પસંદગી):
+        (GIVE HIGHEST PRIORITY. Suggest 2-3 organic methods like જીવામૃત, નીમાસ્ત્ર, ખાટી છાશ etc. CLEARLY specify exact mixing ratio for a 15-liter pump).
+        
+        ### ૫. 🧪 રાસાયણિક ઉપાય (વૈકલ્પિક):
+        (Provide chemical alternative ONLY as a backup. Specify exact 15-liter pump dosage. Add a warning about soil damage).
+        
+        ### ૬. 🧮 પંપ અને દવાની ગણતરી: 
+        (૧ વીઘા = ૨૪ ગુંઠા માટે અંદાજે ૩ પંપ (15 Liters each) વાપરવા. ખેડૂતને ગણતરી સમજાવો).
+        
+        [YT_SEARCH: Keyword1, Keyword2] (Provide 1 or 2 organic method names you just suggested, comma separated)
         """
 
         contents_parts = [{"text": smart_prompt}]
@@ -269,19 +233,30 @@ if uploaded_files:
                 text_response = response.json()['candidates'][0]['content']['parts'][0]['text']
                 status_placeholder.empty()
                 
+                # Extract YouTube Keywords
                 yt_keywords = []
                 yt_match = re.search(r'\[YT_SEARCH:\s*(.*?)\]', text_response)
                 if yt_match:
-                    yt_keywords = [kw.strip() for kw in yt_match.group(1).split(',')]
+                    yt_keywords = [kw.strip() for kw in yt_match.group(1).split(',') if kw.strip()]
                     text_response = re.sub(r'\[YT_SEARCH:\s*.*?\]', '', text_response).strip()
                 
-                # --- HTML કોડ રિમૂવલ (WhatsApp અને Download માટે ચોખ્ખું લખાણ) ---
+                # --- WhatsApp માટે ચોખ્ખું લખાણ અને ઓટોમેટિક લિંક્સ બનાવવી ---
                 clean_text_for_sharing = re.sub(r'<[^>]+>', '', text_response).strip()
                 
-                st.markdown("<div class='custom-card'><div class='section-title'>✅ તમારો સ્માર્ટ રિપોર્ટ</div>", unsafe_allow_html=True)
+                whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location})* 🛡️\n\n{clean_text_for_sharing}\n\n"
+                
+                if yt_keywords:
+                    whatsapp_msg += "📺 *પ્રાકૃતિક દવા ઘરે બનાવવાના વિડીયો:*\n"
+                    for kw in yt_keywords:
+                        yt_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(kw + ' banavvani rit')}"
+                        whatsapp_msg += f"👉 {kw}: {yt_url}\n"
+                
+                whatsapp_msg += "\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
+                
+                st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
                 
                 if voice_enabled:
-                    audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾]', ' ', clean_text_for_sharing)
+                    audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮]', ' ', clean_text_for_sharing)
                     audio_text = f"નમસ્કાર ખેડૂત મિત્ર. તમારો રિપોર્ટ આ મુજબ છે: {audio_clean_text}"
                     try:
                         tts = gTTS(text=audio_text, lang=target_lang_code)
@@ -289,39 +264,26 @@ if uploaded_files:
                         tts.write_to_fp(fp)
                         fp.seek(0)
                         audio_b64 = base64.b64encode(fp.read()).decode()
-                        st.markdown(f'''<div style="margin-bottom:15px;"><audio autoplay controls><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio></div>''', unsafe_allow_html=True)
+                        st.markdown(f'''<audio autoplay controls><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>''', unsafe_allow_html=True)
                     except:
                         pass
                 
-                # --- સુંદર પેજ ફોર્મેટિંગ અને હેડિંગ ---
-                st.markdown(f"""
-                <div class='report-page'>
-                    <div class='report-greeting'>🌾 ખેડૂત મિત્ર, આ રહ્યો તમારા પાકનો સ્માર્ટ રિપોર્ટ:</div>
-                    {text_response}
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown("<div class='report-greeting'>🌾 ખેડૂત મિત્ર, આ રહ્યો તમારો સ્માર્ટ રિપોર્ટ:</div>", unsafe_allow_html=True)
                 
-                # --- Action Buttons ---
+                # રિપોર્ટ પ્રિન્ટ
+                st.markdown(text_response)
+                
+                # Action Buttons
                 html_buttons = '<div class="action-container">'
-                
-                # WhatsApp Button (Clean Text)
-                whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ* 🛡️\n\n{clean_text_for_sharing}\n\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
                 encoded_msg = urllib.parse.quote(whatsapp_msg)
-                html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp શેર</a>'
-                
-                for kw in yt_keywords:
-                    yt_query = urllib.parse.quote(f"How to make {kw} organic farming in {target_lang_name}")
-                    html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} શીખો</a>'
-                
-                html_buttons += f'<a href="https://pmfby.gov.in/" target="_blank" class="action-btn btn-pm">🌾 પાક વીમા અરજી</a>'
+                html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp પર રિપોર્ટ અને વિડીયો લિંક શેર કરો</a>'
                 html_buttons += '</div>'
                 
                 st.markdown(html_buttons, unsafe_allow_html=True)
                 
-                # --- ડાઉનલોડ બટન (.txt ફાઈલ) ---
-                st.write("") # Spacing
+                st.write("") 
                 st.download_button(
-                    label="📄 આ રિપોર્ટ મોબાઈલમાં સેવ કરો (Download)",
+                    label="📄 આ રિપોર્ટ મોબાઈલમાં સેવ કરો (Download TXT)",
                     data=whatsapp_msg,
                     file_name="Krushi_Kavach_Report.txt",
                     mime="text/plain",
@@ -331,6 +293,6 @@ if uploaded_files:
                 st.markdown("</div>", unsafe_allow_html=True)
                 st.balloons()
             else:
-                st.error("ગૂગલ સર્વર વ્યસ્ત છે. કૃપા કરીને ફરી પ્રયાસ કરો.")
+                st.error("ગૂગલ સર્વર વ્યસ્ત છે. કૃપા કરીને થોડીવાર પછી ફરી પ્રયાસ કરો.")
         except Exception as e:
             st.error(f"ઇન્ટરનેટ કનેક્શન એરર: {e}")
