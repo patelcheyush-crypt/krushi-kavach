@@ -120,7 +120,6 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # --- પ્રોસેસિંગ ---
 if uploaded_files:
-    # નોર્મલ પ્રિવ્યુ (જ્યાં સુધી બટન ન દબાવે ત્યાં સુધી)
     image_preview = st.empty()
     with image_preview.container():
         st.markdown("<div class='custom-card'><div class='section-title'>🖼️ પસંદ કરેલા ફોટા</div>", unsafe_allow_html=True)
@@ -130,11 +129,9 @@ if uploaded_files:
         st.markdown("</div>", unsafe_allow_html=True)
     
     if st.button("🚀 વિશ્લેષણ કરો (રોગ, માપ અને હવામાન)"):
-        # બટન દબાવતા જ પ્રિવ્યુ હટાવીને 'સ્કેનર એનિમેશન' બતાવવું
         image_preview.empty()
         scanner_placeholder = st.empty()
         
-        # પહેલા ફોટા પર સ્કેનર એનિમેશન સેટ કરવું
         first_file = uploaded_files[0]
         base64_img = base64.b64encode(first_file.getvalue()).decode('utf-8')
         mime_type = "image/jpeg" if first_file.name.endswith(('jpg', 'jpeg')) else "image/png"
@@ -209,13 +206,12 @@ if uploaded_files:
         data = {"contents": [{"parts": contents_parts}]}
         headers = {'Content-Type': 'application/json'}
         
-        # 🟢 નવું લેટેસ્ટ મોડેલ: gemini-2.5-flash (આ ક્યારેય એરર નહીં આપે!)
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
+        # 🟢 લેટેસ્ટ અને અપડેટેડ મોડેલ (જેમ ગૂગલના સર્વર મેસેજમાં માંગ્યું છે તેમ: gemini-3.8-flash)
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={API_KEY}"
         
         success = False
         error_msg = ""
         
-        # 3 વખત રી-ટ્રાય (Retry) કરવાનું લોજિક (જો કદાચ ઇન્ટરનેટ ધીમું હોય તો)
         for attempt in range(3):
             try:
                 response = requests.post(url, headers=headers, json=data)
@@ -232,7 +228,6 @@ if uploaded_files:
         if success:
             text_response = response.json()['candidates'][0]['content']['parts'][0]['text']
             
-            # સ્કેનર એનિમેશન હટાવી દેવું
             scanner_placeholder.empty()
             
             yt_keywords = []
@@ -289,4 +284,4 @@ if uploaded_files:
         else:
             scanner_placeholder.empty()
             st.error(f"⚠️ ગૂગલ સર્વર એરર: {error_msg}")
-            st.info("કૃપા કરીને ફરીથી પ્રયાસ કરો. જો એરર વારંવાર આવે તો સિક્રેટ કી (API Key) સાચી છે કે નહિ તે ચેક કરો.")
+            st.info("કૃપા કરીને થોડીવાર પછી ફરીથી સ્કેન કરો.")
