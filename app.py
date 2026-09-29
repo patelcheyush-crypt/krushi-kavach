@@ -144,7 +144,7 @@ st.markdown("""
     <div class="info-text"><b>મુખ્ય વિષય:</b> ટકાઉ અને વિકસિત ભારત માટે વિજ્ઞાન, ટેકનોલોજી અને ઈનોવેશન</div>
     <div class="info-text" style="margin-bottom: 15px;"><b>વિભાગ:</b> 1. (A) બહેતર જીવન માટે આર્ટિફિશિયલ ઇન્ટેલિજન્સ (AI)</div>
     <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: left; background: #f9fbe7; padding: 15px; border-radius: 10px;">
-        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. અંજલી ગોવિંદભાઈ ભરવાડ</div>
+        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. ડિમ્પલ કાનજીભાઈ ઠાકોર</div>
         <div><b>👨‍🏫 માર્ગદર્શક શિક્ષક:</b><br>ચેયુષભાઈ એન પટેલ</div>
     </div>
 </div>
