@@ -10,7 +10,7 @@ import time
 # --- પેજ સેટિંગ ---
 st.set_page_config(page_title="AI કૃષિ કવચ", page_icon="🛡️", layout="centered", initial_sidebar_state="collapsed")
 
-# --- પ્રીમિયમ CSS (Android App જેવો લુક) ---
+# --- પ્રીમિયમ CSS ---
 st.markdown("""
 <style>
 #MainMenu {visibility: hidden;}
@@ -19,25 +19,15 @@ header {visibility: hidden;}
 
 .stApp { background-color: #f4f7f6; }
 
-/* ટોપ હેડર */
-.app-header {
-    background: linear-gradient(135deg, #1b5e20, #2e7d32);
-    padding: 20px;
-    border-radius: 0 0 25px 25px;
-    text-align: center;
-    color: white;
-    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4);
-    margin-top: -60px;
-    margin-bottom: 20px;
-}
+.app-header { background: linear-gradient(135deg, #1b5e20, #2e7d32); padding: 20px; border-radius: 0 0 25px 25px; text-align: center; color: white; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); margin-top: -60px; margin-bottom: 20px; }
 .app-header h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 900; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;}
 .app-header p { font-size: clamp(14px, 3vw, 16px); margin: 5px 0 0 0; opacity: 0.9; }
 
-/* પ્રોજેક્ટ કાર્ડ */
 .info-card { background: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 25px; border-top: 5px solid #ff9800; text-align: center; }
 .info-title { color: #1b5e20; font-size: clamp(20px, 4vw, 24px); font-weight: 900; margin-bottom: 5px; }
 .info-text { font-size: clamp(14px, 3vw, 16px); color: #424242; margin-bottom: 5px; line-height: 1.5; }
 .info-highlight { color: #e65100; font-weight: bold; font-size: clamp(15px, 3vw, 17px); margin: 10px 0; }
+.info-date-venue { color: #d32f2f; font-weight: 900; font-size: clamp(15px, 3vw, 17px); margin-bottom: 10px; background-color: #ffebee; padding: 5px; border-radius: 8px; display: inline-block; }
 
 .custom-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); margin-bottom: 25px; border-top: 5px solid #4caf50; }
 .section-title { color: #1b5e20; font-size: clamp(18px, 4vw, 22px); font-weight: bold; margin-bottom: 15px; border-bottom: 2px dashed #c8e6c9; padding-bottom: 10px; }
@@ -47,7 +37,6 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
 
 .report-greeting { font-size: clamp(20px, 4.5vw, 24px); color: #e65100; font-weight: bold; text-align: center; margin-bottom: 15px; border-bottom: 2px solid #ffe0b2; padding-bottom: 10px; }
 
-/* 🌟 સ્માર્ટ બટન ડેશબોર્ડ ડિઝાઇન 🌟 */
 .action-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 25px; }
 .action-btn { padding: 12px 15px; border-radius: 12px; text-decoration: none !important; font-weight: bold; font-size: clamp(14px, 3vw, 16px); flex: 1 1 180px; text-align: center; color: white !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.3s; }
 .action-btn:hover { transform: translateY(-3px); }
@@ -59,7 +48,6 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
 
 audio { width: 100%; border-radius: 10px; margin-bottom: 15px; }
 
-/* સ્કેનર એનિમેશન */
 .scanner-container { position: relative; display: inline-block; overflow: hidden; width: 100%; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 3px solid #4caf50; }
 .scanner-img { width: 100%; display: block; border-radius: 15px; }
 .scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #39ff14; box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14; animation: scan 1.5s infinite linear; }
@@ -75,26 +63,37 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- વિજ્ઞાન મેળાની વિગતો ---
+# --- વિજ્ઞાન મેળાની વિગતો (તમારો નવો સુધારો: સ્થળ, તારીખ અને નામ) ---
 st.markdown("""
 <div class="info-card">
     <div class="info-title">શ્રી ચિત્રાસર પ્રાથમિક શાળા</div>
     <div class="info-text">મુ. ચિત્રાસર, તા. ખેડા, જી. ખેડા</div>
     <div class="info-highlight">નવાગામ ક્લસ્ટર કક્ષાનું વિજ્ઞાન, ગણિત અને પર્યાવરણ પ્રદર્શન : ૨૦૨૬-૨૭</div>
+    <div class="info-date-venue">📍 સ્થળ: ચલીન્દ્રા પ્રાથમિક શાળા &nbsp;|&nbsp; 📅 તારીખ: ૦૯/૧૦/૨૦૨૬</div>
     <hr style='border: 1px dashed #e0e0e0; margin: 15px 0;'>
     <div class="info-text"><b>મુખ્ય વિષય:</b> ટકાઉ અને વિકસિત ભારત માટે વિજ્ઞાન, ટેકનોલોજી અને ઈનોવેશન</div>
     <div class="info-text" style="margin-bottom: 15px;"><b>વિભાગ:</b> 1. (A) બહેતર જીવન માટે આર્ટિફિશિયલ ઇન્ટેલિજન્સ (AI)</div>
     <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: left; background: #f9fbe7; padding: 15px; border-radius: 10px;">
-        <div style="margin-bottom: 10px;"><b>👨‍🎓 વિદ્યાર્થીઓ:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. અંજલી ગોવિંદભાઈ ભરવાડ</div>
+        <div style="margin-bottom: 10px;"><b>👨‍🎓 બાળ વૈજ્ઞાનિકો:</b><br>૧. મેઘાબેન દશરથભાઈ સોઢાપરમાર<br>૨. ડિમ્પલબેન કાનજીભાઈ ઠાકોર</div>
         <div><b>👨‍🏫 માર્ગદર્શક શિક્ષક:</b><br>ચેયુષભાઈ એન પટેલ</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# --- મલ્ટીપલ API Key સેટઅપ (સ્માર્ટ રોટેશન સિસ્ટમ) ---
 try:
-    API_KEY = st.secrets["GEMINI_API_KEY"]
-except:
-    st.error("⚠️ API Key મળતી નથી! સિક્યોરિટી સેટિંગ તપાસો.")
+    if "GEMINI_API_KEYS" in st.secrets:
+        api_keys_list = [k.strip() for k in st.secrets["GEMINI_API_KEYS"].split(",") if k.strip()]
+    elif "GEMINI_API_KEY" in st.secrets:
+        api_keys_list = [st.secrets["GEMINI_API_KEY"]]
+    else:
+        api_keys_list = []
+        
+    if not api_keys_list:
+        st.error("⚠️ API Key મળતી નથી! કૃપા કરીને સિક્યોરિટી સેટિંગમાં 'GEMINI_API_KEYS' ઉમેરો.")
+        st.stop()
+except Exception as e:
+    st.error("⚠️ સિક્યોરિટી સેટિંગમાં ભૂલ છે! મહેરબાની કરીને API Key ચેક કરો.")
     st.stop()
 
 # --- ઓટોમેટિક લાઈવ લોકેશન ---
@@ -117,9 +116,9 @@ target_lang_name = selected_lang.split(' ')[0]
 voice_enabled = st.toggle("🔊 ઓડિયો રિપોર્ટ (બોલીને સંભળાવો)", value=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- ફોટો અપલોડ ---
-st.markdown("<div class='custom-card'><div class='section-title'>📸 પાકનો ફોટો પાડો</div>", unsafe_allow_html=True)
-st.info("💡 શ્રેષ્ઠ નિદાન માટે બે ફોટા પાડો: (૧) બીમાર પાંદડાની નજીકથી અને (૨) આખા છોડનો ફોટો.")
+# --- ફોટો અપલોડ (મલ્ટીપલ ફોટો સિસ્ટમ) ---
+st.markdown("<div class='custom-card'><div class='section-title'>📸 પાકનો ફોટો પાડો (1 થી વધુ ફોટા આપી શકો છો)</div>", unsafe_allow_html=True)
+st.info("💡 શ્રેષ્ઠ નિદાન માટે: (૧) બીમાર પાંદડાનો નજીકથી અને (૨) આખા છોડનો ફોટો એમ ૨-૩ ફોટા એકસાથે પાડો અથવા ગેલેરીમાંથી પસંદ કરો.")
 uploaded_files = st.file_uploader("અહીં ક્લિક કરી ફોટો પાડો", type=["jpg", "jpeg", "png"], accept_multiple_files=True, label_visibility="collapsed")
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -127,7 +126,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 if uploaded_files:
     image_preview = st.empty()
     with image_preview.container():
-        st.markdown("<div class='custom-card'><div class='section-title'>🖼️ પસંદ કરેલા ફોટા</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='custom-card'><div class='section-title'>🖼 પસંદ કરેલા ફોટા ({len(uploaded_files)})</div>", unsafe_allow_html=True)
         cols = st.columns(len(uploaded_files))
         for idx, file in enumerate(uploaded_files):
             cols[idx].image(file, use_container_width=True)
@@ -148,6 +147,7 @@ if uploaded_files:
                 <img src="data:{mime_type};base64,{base64_img}" class="scanner-img" />
                 <div class="scanner-line"></div>
             </div>
+            <p style='color:#1b5e20; margin-top:10px;'><b>{len(uploaded_files)} ફોટાઓનું</b> વિશ્લેષણ થઈ રહ્યું છે...</p>
         </div>
         """
         scanner_placeholder.markdown(scanner_html, unsafe_allow_html=True)
@@ -176,13 +176,13 @@ if uploaded_files:
                 pass
 
         smart_prompt = f"""
-        Analyze ALL provided crop images. Provide response STRICTLY in {target_lang_name} language. 
+        Analyze ALL provided crop images together. Provide response STRICTLY in {target_lang_name} language. 
         IMPORTANT FORMATTING RULES: 
         1. Use proper Markdown Headings (###) for each section.
         2. Leave a DOUBLE NEWLINE (\\n\\n) after every single section.
         
         ### ૧. 🌾 પાક અને રોગનું નામ: 
-        (Provide accurate crop and disease name)
+        (Provide accurate crop and disease name by analyzing all provided photos)
         
         ### ૨. 📊 રોગની અસર (Severity %): 
         (Provide percentage. If damage is >= 80%, strongly advise the farmer to apply for 'Pradhan Mantri Fasal Bima Yojana' for compensation).
@@ -206,6 +206,8 @@ if uploaded_files:
         """
 
         contents_parts = [{"text": smart_prompt}]
+        
+        # લૂપ દ્વારા બધા જ (૧, ૨ કે ૩) ફોટા AI ને મોકલવામાં આવશે
         for file in uploaded_files:
             base64_image = base64.b64encode(file.getvalue()).decode('utf-8')
             mime_type = "image/jpeg" if file.name.endswith(('jpg', 'jpeg')) else "image/png"
@@ -214,30 +216,36 @@ if uploaded_files:
         data = {"contents": [{"parts": contents_parts}]}
         headers = {'Content-Type': 'application/json'}
         
-        # 🟢 સાચું અને વર્કિંગ મોડેલ (gemini-3.8-flash) 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={API_KEY}"
-        
         success = False
         error_msg = ""
         
-        for attempt in range(3):
-            try:
-                response = requests.post(url, headers=headers, json=data)
-                if response.status_code == 200:
-                    success = True
-                    break
-                else:
-                    error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
-                    time.sleep(2)
-            except Exception as e:
-                error_msg = str(e)
-                time.sleep(2)
+        # 🟢 મલ્ટીપલ API Key લૂપ (જે મોડેલ વ્યવસ્થિત ચાલે છે: gemini-3.8-flash)
+        for current_key in api_keys_list:
+            if success:
+                break
+                
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={current_key}"
+            
+            for attempt in range(2):
+                try:
+                    response = requests.post(url, headers=headers, json=data)
+                    if response.status_code == 200:
+                        success = True
+                        break
+                    elif response.status_code == 429:
+                        error_msg = "પહેલી API Key ની લિમિટ પૂરી, બીજી કી પર સ્વિચ કરી રહ્યું છે..."
+                        break
+                    else:
+                        error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
+                        time.sleep(1.5)
+                except Exception as e:
+                    error_msg = str(e)
+                    time.sleep(1.5)
         
         if success:
             text_response = response.json()['candidates'][0]['content']['parts'][0]['text']
             scanner_placeholder.empty()
             
-            # વિડીયોના Keywords અલગ કાઢવા
             yt_keywords = []
             yt_match = re.search(r'\[YT_SEARCH:\s*(.*?)\]', text_response)
             if yt_match:
@@ -265,29 +273,23 @@ if uploaded_files:
             st.markdown("<div class='report-greeting'>✅ તમારો સ્માર્ટ રિપોર્ટ તૈયાર છે:</div>", unsafe_allow_html=True)
             st.markdown(text_response)
             
-            # 🌟 અલગ અલગ બટન વાળું સ્માર્ટ ડેશબોર્ડ 🌟
+            # 🌟 સ્માર્ટ ડેશબોર્ડ (તમામ રંગીન બટન સાથે) 🌟
             st.markdown("---")
             st.markdown("<h4 style='text-align: center; color: #1b5e20;'>🛠️ ખેડૂત હેલ્પલાઇન અને એક્શન ડેશબોર્ડ</h4>", unsafe_allow_html=True)
             
             html_buttons = '<div class="action-container">'
             
-            # ૧. WhatsApp બટન
             encoded_msg = urllib.parse.quote(whatsapp_msg)
             html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp માં રિપોર્ટ મોકલો</a>'
             
-            # ૨. YouTube બટન (ઓર્ગેનિક દવા શીખવા)
             for kw in yt_keywords:
                 yt_query = urllib.parse.quote(f"{kw} banavvani rit")
                 html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} બનાવતા શીખો (વિડીયો)</a>'
             
-            # ૩. નજીકનો એગ્રો સ્ટોર બટન
             maps_url = "https://www.google.com/maps/search/Agro+center+near+me"
             html_buttons += f'<a href="{maps_url}" target="_blank" class="action-btn btn-map">📍 નજીકનો એગ્રો સ્ટોર શોધો</a>'
             
-            # ૪. કિસાન કોલ સેન્ટર બટન
             html_buttons += f'<a href="tel:1551" class="action-btn btn-call">📞 શું કોલ કરવો છે? 1551 ડાયલ કરો</a>'
-            
-            # ૫. પાક વીમા યોજના બટન
             html_buttons += f'<a href="https://pmfby.gov.in/" target="_blank" class="action-btn btn-pm">🌾 પાક વીમા યોજના (PMFBY)</a>'
             
             html_buttons += '</div>'
@@ -307,4 +309,4 @@ if uploaded_files:
         else:
             scanner_placeholder.empty()
             st.error(f"⚠️ ગૂગલ સર્વર એરર: {error_msg}")
-            st.info("કૃપા કરીને થોડીવાર પછી ફરીથી સ્કેન કરો.")
+            st.info("કૃપા કરીને 30 સેકન્ડ પછી ફરીથી સ્કેન કરો. (અથવા નવી API Key નાખો).")
