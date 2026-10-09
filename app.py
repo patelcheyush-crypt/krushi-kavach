@@ -39,6 +39,7 @@ div.stButton > button:first-child:hover { transform: scale(1.02); }
 .scanner-img { width: 100%; display: block; border-radius: 15px; }
 .scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #39ff14; box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14; animation: scan 1.5s infinite linear; }
 @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.wa-note { text-align: center; font-size: 12px; color: #d32f2f; margin-top: 5px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -102,19 +103,17 @@ target_lang_code = languages[selected_lang]
 target_lang_name = selected_lang.split(' ')[0]
 
 ui_dict = {
-    "gu": {"loc": "📍 લાઈવ લોકેશન:", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
-    "hi": {"loc": "📍 लाइव लोकेशन:", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
-    "en": {"loc": "📍 Live Location:", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
+    "gu": {"loc": "📍 લાઈવ લોકેશન:", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "wa_note": "(નોંધ: ફોટો તમારે જાતે એટેચ કરવો પડશે)", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
+    "hi": {"loc": "📍 लाइव लोकेशन:", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "wa_note": "(नोट: फोटो आपको खुद अटैच करना होगा)", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
+    "en": {"loc": "📍 Live Location:", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "wa_note": "(Note: Attach photo manually in WhatsApp)", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
 }
 ui = ui_dict.get(target_lang_code, ui_dict["en"])
 
 st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
-
-# 🌟 ઓટોમેટિક લોકેશન દર્શાવશે 🌟
 st.success(f"{ui['loc']} **{st.session_state.live_location}**")
+st.session_state.live_location = st.text_input("જો લોકેશનમાં ભૂલ હોય તો અહીં સુધારો:", value=st.session_state.live_location, label_visibility="collapsed")
 voice_enabled = st.toggle(ui['audio'], value=True)
 
-# 🌟 લાઈવ વિઝિટર કાઉન્ટર 🌟
 st.markdown(f"""
 <div style='margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c8e6c9; text-align: center;'>
     <span style='font-weight: bold; color: #1b5e20; margin-right: 10px;'>{ui['visitors']}</span>
@@ -175,14 +174,13 @@ if uploaded_files:
             except:
                 pass
 
-        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: કાગળના ફોટા માટે AI ને કડક સૂચના (Demo Bypass) 🌟
+        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: મુક્ત પ્રાકૃતિક ઉપાયો સાથે 🌟
         smart_prompt = f"""
         CRITICAL INSTRUCTION: You are an Expert Agriculture Scientist participating in a School Science Fair Demonstration. 
-        IMPORTANT: The user might upload images of PRINTED PHOTOS ON PAPER, drawings, or pictures on a computer/mobile screen to demonstrate plant diseases. YOU MUST NOT REFUSE TO ANSWER. DO NOT say "I cannot assist with that". Treat any image of a plant/leaf (even if it's on paper or screen) as a REAL plant and analyze the disease shown in the photo completely.
+        IMPORTANT: The user might upload images of PRINTED PHOTOS ON PAPER, drawings, or pictures on a computer/mobile screen to demonstrate plant diseases. YOU MUST NOT REFUSE TO ANSWER. DO NOT say "I cannot assist with that". Treat any image of a plant/leaf as a REAL plant and analyze it completely.
 
         Analyze ALL provided images together. Determine if it is a 'Farm Crop' or 'Home/Garden Plant'.
         Provide response STRICTLY and HIGHLY DETAILED in {target_lang_name} language. 
-        Make the analysis highly structured, descriptive, and exactly like an expert's detailed report. Do NOT give short answers.
         
         FORMATTING: Use proper Markdown Headings (###).
         
@@ -195,16 +193,17 @@ if uploaded_files:
         ### ૩. હવામાન અને છંટકાવની સલાહ ({st.session_state.live_location}):
         ({weather_details}. Based on this, explain clearly when is the exact best time to spray).
         
-        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ઉપાય (સ્ટેપ-બાય-સ્ટેપ રીત):
-        (Give 2 detailed natural remedies. Explain EXACTLY how to make it, ingredients needed, and how to mix it. Give highly detailed guidance. Farm: 15-liter pump ratio. Garden: 1-Liter bottle).
+        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ખેતી ઉપાય (સ્ટેપ-બાય-સ્ટેપ રીત):
+        (GIVE HIGHEST PRIORITY to Organic/Natural farming. Suggest the BEST and most appropriate natural/organic remedy for this specific problem based on your expert knowledge. It can be ANY suitable organic method. Explain EXACTLY how to make it and how to mix it. 
+        IF 'Farm Crop': Dosage MUST be explained for a 15-liter spray pump. IF 'Garden Plant': 1-Liter bottle).
         
-        ### ૫. રાસાયણિક દવા (વૈકલ્પિક - ચોક્કસ નામ સાથે):
-        (Provide specific chemical formulation/medicine name and detailed exact dosage).
+        ### ૫. રાસાયણિક દવા (વૈકલ્પિક - માત્ર ઈમરજન્સી માટે):
+        (Provide specific chemical formulation and exact dosage per 15-Liters).
         
-        ### ૬. દવાની ગણતરી અને સાવચેતી: 
-        (Farm: 3 pumps per 1 Bigha / 24 Guntha. Explain safety precautions thoroughly).
+        ### ૬. દવાની ગણતરી (ખેડૂતનું દેશી માપ): 
+        (CRITICAL: IF it is a 'Farm Crop', you MUST strictly state that for "1 Bigha (૧ વીઘા = ૨૪ ગુંઠા) land, 3 pumps of 15-liters are required". Explain safety precautions thoroughly).
         
-        [YT_SEARCH: Keyword1, Keyword2]
+        [YT_SEARCH: Keyword1, Keyword2] (Provide 1 or 2 EXACT YouTube search phrases in local language for the organic methods you suggested. Provide ONLY the phrase, comma separated).
         """
 
         contents_parts = [{"type": "text", "text": smart_prompt}]
@@ -242,7 +241,6 @@ if uploaded_files:
                 
                 st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
                 
-                # 🌟 ઓડિયો માટે અદ્યતન ક્લીનિંગ (માત્ર ચોખ્ખું લખાણ વંચાશે) 🌟
                 if voice_enabled:
                     audio_clean_text = clean_text_for_sharing
                     for char in ['*', '#', '_', '-', '🚨', '💡', '🌿', '🧪', '🌾', '📊', '🌦️', '🧮', '📞', '📍', '💬', '📺', '[', ']']:
@@ -265,10 +263,12 @@ if uploaded_files:
                 
                 html_buttons = '<div class="action-container">'
                 encoded_msg = urllib.parse.quote(whatsapp_msg)
-                html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">{ui["wa"]}</a>'
+                
+                # 🌟 WhatsApp બટન અને સૂચના 🌟
+                html_buttons += f'<div><a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa" style="display:block; width:100%;">{ui["wa"]}</a><div class="wa-note">{ui["wa_note"]}</div></div>'
                 
                 for kw in yt_keywords:
-                    yt_query = urllib.parse.quote(f"{kw} organic remedy")
+                    yt_query = urllib.parse.quote(kw)
                     html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} (YouTube)</a>'
                 
                 maps_url = "https://www.google.com/maps/search/Agro+center+near+me"
