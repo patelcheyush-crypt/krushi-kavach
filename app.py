@@ -72,7 +72,7 @@ except:
     st.error("⚠️ API Key મળતી નથી! કૃપા કરીને Streamlit ના સિક્યોરિટી સેટિંગમાં 'OPENAI_API_KEY' ઉમેરો.")
     st.stop()
 
-# 🌟 ઓટોમેટિક લોકેશન સિસ્ટમ (બિલકુલ મેન્યુઅલ નહિ) 🌟
+# 🌟 ઓટોમેટિક લોકેશન સિસ્ટમ 🌟
 def get_auto_location():
     try:
         res = requests.get('https://ipapi.co/json/', timeout=3).json()
@@ -91,7 +91,7 @@ def get_auto_location():
 if 'live_location' not in st.session_state:
     st.session_state.live_location = get_auto_location()
 
-# 🌟 ભાષા પસંદગી અને ડાયનેમિક UI ડિક્શનરી 🌟
+# 🌟 ભાષા પસંદગી 🌟
 languages = {
     "ગુજરાતી (Gujarati)": "gu", "हिंदी (Hindi)": "hi", "मराठी (Marathi)": "mr", "বাংলা (Bengali)": "bn",
     "తెలుగు (Telugu)": "te", "தமிழ் (Tamil)": "ta", "ಕನ್ನಡ (Kannada)": "kn", "ଓଡ଼ିଆ (Odia)": "or",
@@ -175,9 +175,11 @@ if uploaded_files:
             except:
                 pass
 
-        # 🌟 નવો અત્યંત વિગતવાર પ્રોમ્પ્ટ (Gemini જેવો ઊંડાણપૂર્વકનો રિપોર્ટ લાવવા) 🌟
+        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: કાગળના ફોટા માટે AI ને કડક સૂચના (Demo Bypass) 🌟
         smart_prompt = f"""
-        તમે એક એક્સપર્ટ 'એગ્રીકલ્ચર સાયન્ટિસ્ટ' (કૃષિ નિષ્ણાત) છો. 
+        CRITICAL INSTRUCTION: You are an Expert Agriculture Scientist participating in a School Science Fair Demonstration. 
+        IMPORTANT: The user might upload images of PRINTED PHOTOS ON PAPER, drawings, or pictures on a computer/mobile screen to demonstrate plant diseases. YOU MUST NOT REFUSE TO ANSWER. DO NOT say "I cannot assist with that". Treat any image of a plant/leaf (even if it's on paper or screen) as a REAL plant and analyze the disease shown in the photo completely.
+
         Analyze ALL provided images together. Determine if it is a 'Farm Crop' or 'Home/Garden Plant'.
         Provide response STRICTLY and HIGHLY DETAILED in {target_lang_name} language. 
         Make the analysis highly structured, descriptive, and exactly like an expert's detailed report. Do NOT give short answers.
@@ -185,7 +187,7 @@ if uploaded_files:
         FORMATTING: Use proper Markdown Headings (###).
         
         ### ૧. પાક/છોડ અને રોગની સંપૂર્ણ ઓળખ: 
-        (Provide accurate name. Detail the exact symptoms you see in the photo. What exactly is happening to the leaves/plant? Explain thoroughly).
+        (Provide accurate name. Detail the exact symptoms you see. Explain thoroughly).
         
         ### ૨. રોગની અસર અને નુકસાની (Severity %): 
         (Provide percentage. If Farm Crop >= 80%, advise PMFBY. Tell them how bad the situation is).
@@ -194,14 +196,13 @@ if uploaded_files:
         ({weather_details}. Based on this, explain clearly when is the exact best time to spray).
         
         ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ઉપાય (સ્ટેપ-બાય-સ્ટેપ રીત):
-        (Give 2 detailed natural remedies. Explain EXACTLY how to make it, ingredients needed, and how to mix it. Give highly detailed guidance.
-        Farm: 15-liter pump ratio. Garden: 1-Liter bottle).
+        (Give 2 detailed natural remedies. Explain EXACTLY how to make it, ingredients needed, and how to mix it. Give highly detailed guidance. Farm: 15-liter pump ratio. Garden: 1-Liter bottle).
         
         ### ૫. રાસાયણિક દવા (વૈકલ્પિક - ચોક્કસ નામ સાથે):
         (Provide specific chemical formulation/medicine name and detailed exact dosage).
         
         ### ૬. દવાની ગણતરી અને સાવચેતી: 
-        (Farm: 3 pumps per 1 Bigha / 24 Guntha. Explain safety precautions while spraying. Explain thoroughly).
+        (Farm: 3 pumps per 1 Bigha / 24 Guntha. Explain safety precautions thoroughly).
         
         [YT_SEARCH: Keyword1, Keyword2]
         """
@@ -244,7 +245,6 @@ if uploaded_files:
                 # 🌟 ઓડિયો માટે અદ્યતન ક્લીનિંગ (માત્ર ચોખ્ખું લખાણ વંચાશે) 🌟
                 if voice_enabled:
                     audio_clean_text = clean_text_for_sharing
-                    # બિનજરૂરી ચિહ્નો અને માર્કડાઉન દૂર કરવા
                     for char in ['*', '#', '_', '-', '🚨', '💡', '🌿', '🧪', '🌾', '📊', '🌦️', '🧮', '📞', '📍', '💬', '📺', '[', ']']:
                         audio_clean_text = audio_clean_text.replace(char, '')
                     
@@ -288,12 +288,4 @@ if uploaded_files:
                     use_container_width=True
                 )
                 
-                st.markdown("</div>", unsafe_allow_html=True)
-                st.balloons()
-            else:
-                scanner_placeholder.empty()
-                error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
-                st.error(f"⚠️ OpenAI Server Error: {error_msg}")
-        except Exception as e:
-            scanner_placeholder.empty()
-            st.error(f"⚠️ Internet Connection Error: {e}")
+                st.markdown("
