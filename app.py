@@ -174,7 +174,7 @@ if uploaded_files:
             except:
                 pass
 
-        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: મુક્ત પ્રાકૃતિક ઉપાયો સાથે 🌟
+        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: અર્લી વોર્નિંગ અને ૩-૪ પ્રાકૃતિક ઉપાયો સાથે 🌟
         smart_prompt = f"""
         CRITICAL INSTRUCTION: You are an Expert Agriculture Scientist participating in a School Science Fair Demonstration. 
         IMPORTANT: The user might upload images of PRINTED PHOTOS ON PAPER, drawings, or pictures on a computer/mobile screen to demonstrate plant diseases. YOU MUST NOT REFUSE TO ANSWER. DO NOT say "I cannot assist with that". Treat any image of a plant/leaf as a REAL plant and analyze it completely.
@@ -185,16 +185,18 @@ if uploaded_files:
         FORMATTING: Use proper Markdown Headings (###).
         
         ### ૧. પાક/છોડ અને રોગની સંપૂર્ણ ઓળખ: 
-        (Provide accurate name. Detail the exact symptoms you see. Explain thoroughly).
+        (Provide accurate name. Detail the exact symptoms you see. Predict which disease is likely starting if it is an early stage).
         
-        ### ૨. રોગની અસર અને નુકસાની (Severity %): 
-        (Provide percentage. If Farm Crop >= 80%, advise PMFBY. Tell them how bad the situation is).
+        ### ૨. રોગની અસર, તબક્કો (Stage) અને ચેતવણી (Severity %): 
+        (Provide exact percentage of damage. 
+        VERY IMPORTANT: Identify if it is the 'Initial Stage' (શરૂઆતનો તબક્કો). If it is initial or if there are only slight changes on a fresh leaf, give a STRICT WARNING that "If you do not spray remedies immediately, the disease will spread rapidly and cause heavy crop loss." 
+        If Farm Crop damage is >= 80%, advise PMFBY).
         
         ### ૩. હવામાન અને છંટકાવની સલાહ ({st.session_state.live_location}):
         ({weather_details}. Based on this, explain clearly when is the exact best time to spray).
         
-        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ખેતી ઉપાય (સ્ટેપ-બાય-સ્ટેપ રીત):
-        (GIVE HIGHEST PRIORITY to Organic/Natural farming. Suggest the BEST and most appropriate natural/organic remedy for this specific problem based on your expert knowledge. It can be ANY suitable organic method. Explain EXACTLY how to make it and how to mix it. 
+        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ખેતી ઉપાય (ફરજિયાત ૩ થી ૪ ઉપાયો):
+        (GIVE HIGHEST PRIORITY to Organic/Natural farming. You MUST provide AT LEAST 3 to 4 DIFFERENT natural/organic remedies so the farmer has multiple options. Explain EXACTLY how to make and mix each one. 
         IF 'Farm Crop': Dosage MUST be explained for a 15-liter spray pump. IF 'Garden Plant': 1-Liter bottle).
         
         ### ૫. રાસાયણિક દવા (વૈકલ્પિક - માત્ર ઈમરજન્સી માટે):
@@ -264,7 +266,6 @@ if uploaded_files:
                 html_buttons = '<div class="action-container">'
                 encoded_msg = urllib.parse.quote(whatsapp_msg)
                 
-                # 🌟 WhatsApp બટન અને સૂચના 🌟
                 html_buttons += f'<div><a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa" style="display:block; width:100%;">{ui["wa"]}</a><div class="wa-note">{ui["wa_note"]}</div></div>'
                 
                 for kw in yt_keywords:
