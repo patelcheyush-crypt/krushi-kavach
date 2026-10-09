@@ -72,21 +72,21 @@ except:
     st.error("⚠️ API Key મળતી નથી! કૃપા કરીને Streamlit ના સિક્યોરિટી સેટિંગમાં 'OPENAI_API_KEY' ઉમેરો.")
     st.stop()
 
-# 🌟 એડવાન્સ ડબલ-ચેક ઓટોમેટિક લોકેશન સિસ્ટમ 🌟
+# 🌟 ઓટોમેટિક લોકેશન સિસ્ટમ (બિલકુલ મેન્યુઅલ નહિ) 🌟
 def get_auto_location():
     try:
-        res = requests.get('https://ipapi.co/json/', timeout=4).json()
+        res = requests.get('https://ipapi.co/json/', timeout=3).json()
         if 'city' in res and res['city']:
             return f"{res['city']}, {res['region']}"
     except:
         pass
     try:
-        res = requests.get('http://ip-api.com/json/', timeout=4).json()
+        res = requests.get('http://ip-api.com/json/', timeout=3).json()
         if res.get('status') == 'success':
             return f"{res.get('city')}, {res.get('regionName')}"
     except:
         pass
-    return "Bhavnagar, Gujarat" # Default Fallback
+    return "Bhavnagar, Gujarat"
 
 if 'live_location' not in st.session_state:
     st.session_state.live_location = get_auto_location()
@@ -102,18 +102,19 @@ target_lang_code = languages[selected_lang]
 target_lang_name = selected_lang.split(' ')[0]
 
 ui_dict = {
-    "gu": {"loc": "📍 તમારું લોકેશન (જો ખોટું હોય તો અહીં સુધારો):", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
-    "hi": {"loc": "📍 आपकी लोकेशन (गलत हो तो सुधारें):", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
-    "en": {"loc": "📍 Your Location (Edit if incorrect):", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
+    "gu": {"loc": "📍 લાઈવ લોકેશન:", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
+    "hi": {"loc": "📍 लाइव लोकेशन:", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
+    "en": {"loc": "📍 Live Location:", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
 }
 ui = ui_dict.get(target_lang_code, ui_dict["en"])
 
 st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
-# 🌟 એડિટેબલ ટેક્સ્ટ બોક્સ (ખેડૂત જાતે લોકેશન સુધારી શકશે) 🌟
-st.session_state.live_location = st.text_input(ui['loc'], value=st.session_state.live_location)
 
+# 🌟 ઓટોમેટિક લોકેશન દર્શાવશે 🌟
+st.success(f"{ui['loc']} **{st.session_state.live_location}**")
 voice_enabled = st.toggle(ui['audio'], value=True)
 
+# 🌟 લાઈવ વિઝિટર કાઉન્ટર 🌟
 st.markdown(f"""
 <div style='margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c8e6c9; text-align: center;'>
     <span style='font-weight: bold; color: #1b5e20; margin-right: 10px;'>{ui['visitors']}</span>
@@ -158,7 +159,7 @@ if uploaded_files:
         scanner_placeholder.markdown(scanner_html, unsafe_allow_html=True)
 
         weather_details = "લોકેશનની ચોક્કસ માહિતી ઉપલબ્ધ નથી."
-        if st.session_state.live_location and st.session_state.live_location.strip() != "":
+        if st.session_state.live_location:
             try:
                 geo_res = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={st.session_state.live_location}&count=1", timeout=5).json()
                 if "results" in geo_res and len(geo_res["results"]) > 0:
@@ -170,38 +171,39 @@ if uploaded_files:
                     day_after = w_res["daily"]["precipitation_probability_max"][2]
                     
                     max_rain = max(today, tomorrow, day_after)
-                    weather_details = f"Today's rain probability: {today}%, Tomorrow: {tomorrow}%. Max rain chance in 3 days: {max_rain}%."
+                    weather_details = f"આજે વરસાદની શક્યતા {today}% છે. 3 દિવસમાં વધુમાં વધુ વરસાદની શક્યતા {max_rain}% છે."
             except:
                 pass
 
+        # 🌟 નવો અત્યંત વિગતવાર પ્રોમ્પ્ટ (Gemini જેવો ઊંડાણપૂર્વકનો રિપોર્ટ લાવવા) 🌟
         smart_prompt = f"""
-        Analyze ALL provided images together. First, determine if the image is a 'Farm Crop' (ખેતરનો પાક) OR a 'Home/Garden Plant' (ઘર/બગીચાનો છોડ). Provide response STRICTLY in {target_lang_name} language. 
-        IMPORTANT FORMATTING RULES: 
-        1. Use proper Markdown Headings (###) for each section.
-        2. Leave a DOUBLE NEWLINE (\\n\\n) after every single section.
+        તમે એક એક્સપર્ટ 'એગ્રીકલ્ચર સાયન્ટિસ્ટ' (કૃષિ નિષ્ણાત) છો. 
+        Analyze ALL provided images together. Determine if it is a 'Farm Crop' or 'Home/Garden Plant'.
+        Provide response STRICTLY and HIGHLY DETAILED in {target_lang_name} language. 
+        Make the analysis highly structured, descriptive, and exactly like an expert's detailed report. Do NOT give short answers.
         
-        ### 1. પાક / છોડ અને રોગનું નામ (Crop/Plant & Disease Name): 
-        (Provide accurate name of the plant and the disease/pest by analyzing the photos. Explicitly mention if this looks like a Farm Crop or a Garden Plant).
+        FORMATTING: Use proper Markdown Headings (###).
         
-        ### 2. રોગની અસર (Severity %): 
-        (Provide severity percentage. IF it is a 'Farm Crop' AND damage is >= 80%, strongly advise applying for 'Pradhan Mantri Fasal Bima Yojana'. IF it is a 'Garden Plant', SKIP the insurance advice and just give pruning/care tips).
+        ### ૧. પાક/છોડ અને રોગની સંપૂર્ણ ઓળખ: 
+        (Provide accurate name. Detail the exact symptoms you see in the photo. What exactly is happening to the leaves/plant? Explain thoroughly).
         
-        ### 3. હવામાન રિપોર્ટ ({st.session_state.live_location}):
-        (Weather details: {weather_details}. Advise if it is safe to spray medicines today based on rain probability).
+        ### ૨. રોગની અસર અને નુકસાની (Severity %): 
+        (Provide percentage. If Farm Crop >= 80%, advise PMFBY. Tell them how bad the situation is).
         
-        ### 4. પ્રાકૃતિક / ઘરગથ્થુ ઉપાય (Organic/Home Remedy):
-        (GIVE HIGHEST PRIORITY. Suggest 2-3 natural methods. 
-        - IF 'Farm Crop': Specify exact mixing ratio for a 15-liter pump.
-        - IF 'Garden Plant': Specify exact mixing ratio for a small 1-Liter spray bottle using common kitchen items like Neem oil, baking soda, or dish soap).
+        ### ૩. હવામાન અને છંટકાવની સલાહ ({st.session_state.live_location}):
+        ({weather_details}. Based on this, explain clearly when is the exact best time to spray).
         
-        ### 5. રાસાયણિક ઉપાય (Chemical Remedy - Optional):
-        (Provide chemical alternative ONLY as a backup. Adjust dosage for 15-Liters if farm, or 1-Liter if garden).
+        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ઉપાય (સ્ટેપ-બાય-સ્ટેપ રીત):
+        (Give 2 detailed natural remedies. Explain EXACTLY how to make it, ingredients needed, and how to mix it. Give highly detailed guidance.
+        Farm: 15-liter pump ratio. Garden: 1-Liter bottle).
         
-        ### 6. દવાની ગણતરી (Measurement & Application): 
-        (IF 'Farm Crop': Explain that generally 3 pumps of 15-liters are required for 1 Bigha / 24 Guntha of land. 
-        IF 'Garden Plant': Explain how to safely spray using a 1-Liter hand sprayer without damaging the indoor/outdoor environment).
+        ### ૫. રાસાયણિક દવા (વૈકલ્પિક - ચોક્કસ નામ સાથે):
+        (Provide specific chemical formulation/medicine name and detailed exact dosage).
         
-        [YT_SEARCH: Keyword1, Keyword2] (Provide 1 or 2 organic method names you just suggested, comma separated in local language)
+        ### ૬. દવાની ગણતરી અને સાવચેતી: 
+        (Farm: 3 pumps per 1 Bigha / 24 Guntha. Explain safety precautions while spraying. Explain thoroughly).
+        
+        [YT_SEARCH: Keyword1, Keyword2]
         """
 
         contents_parts = [{"type": "text", "text": smart_prompt}]
@@ -216,7 +218,8 @@ if uploaded_files:
         data = {
             "model": "gpt-4o-mini",
             "messages": [{"role": "user", "content": contents_parts}],
-            "max_tokens": 1500
+            "max_tokens": 2000,
+            "temperature": 0.4
         }
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}
         url = "https://api.openai.com/v1/chat/completions"
@@ -234,14 +237,19 @@ if uploaded_files:
                     text_response = re.sub(r'\[YT_SEARCH:\s*.*?\]', '', text_response).strip()
                 
                 clean_text_for_sharing = re.sub(r'<[^>]+>', '', text_response).strip()
-                whatsapp_msg = f"🛡️ AI Crop Shield - Smart Report ({st.session_state.live_location}) 🛡️\n\n{clean_text_for_sharing}\n\nProject by: Chitrasar Primary School"
+                whatsapp_msg = f"🛡️ AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location}) 🛡️\n\n{clean_text_for_sharing}\n\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
                 
                 st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
                 
+                # 🌟 ઓડિયો માટે અદ્યતન ક્લીનિંગ (માત્ર ચોખ્ખું લખાણ વંચાશે) 🌟
                 if voice_enabled:
-                    audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮📞]', ' ', clean_text_for_sharing)
+                    audio_clean_text = clean_text_for_sharing
+                    # બિનજરૂરી ચિહ્નો અને માર્કડાઉન દૂર કરવા
+                    for char in ['*', '#', '_', '-', '🚨', '💡', '🌿', '🧪', '🌾', '📊', '🌦️', '🧮', '📞', '📍', '💬', '📺', '[', ']']:
+                        audio_clean_text = audio_clean_text.replace(char, '')
+                    
                     try:
-                        tts = gTTS(text=audio_clean_text, lang=target_lang_code)
+                        tts = gTTS(text=f"નમસ્કાર ખેડૂત મિત્ર. તમારો રિપોર્ટ આ મુજબ છે. {audio_clean_text}", lang=target_lang_code)
                         fp = io.BytesIO()
                         tts.write_to_fp(fp)
                         fp.seek(0)
