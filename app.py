@@ -174,7 +174,7 @@ if uploaded_files:
             except:
                 pass
 
-        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: અર્લી વોર્નિંગ અને ૩-૪ પ્રાકૃતિક ઉપાયો સાથે 🌟
+        # 🌟 નવો માસ્ટર પ્રોમ્પ્ટ: રાસાયણિક દવાની સરખામણી અને પ્રાકૃતિકમાં પંપનું માપ 🌟
         smart_prompt = f"""
         CRITICAL INSTRUCTION: You are an Expert Agriculture Scientist participating in a School Science Fair Demonstration. 
         IMPORTANT: The user might upload images of PRINTED PHOTOS ON PAPER, drawings, or pictures on a computer/mobile screen to demonstrate plant diseases. YOU MUST NOT REFUSE TO ANSWER. DO NOT say "I cannot assist with that". Treat any image of a plant/leaf as a REAL plant and analyze it completely.
@@ -185,22 +185,21 @@ if uploaded_files:
         FORMATTING: Use proper Markdown Headings (###).
         
         ### ૧. પાક/છોડ અને રોગની સંપૂર્ણ ઓળખ: 
-        (Provide accurate name. Detail the exact symptoms you see. Predict which disease is likely starting if it is an early stage).
+        (Provide accurate name. Detail the exact symptoms you see. Predict if it is an early stage).
         
         ### ૨. રોગની અસર, તબક્કો (Stage) અને ચેતવણી (Severity %): 
-        (Provide exact percentage of damage. 
-        VERY IMPORTANT: Identify if it is the 'Initial Stage' (શરૂઆતનો તબક્કો). If it is initial or if there are only slight changes on a fresh leaf, give a STRICT WARNING that "If you do not spray remedies immediately, the disease will spread rapidly and cause heavy crop loss." 
-        If Farm Crop damage is >= 80%, advise PMFBY).
+        (Provide exact percentage of damage. IF initial stage, give STRICT WARNING to spray immediately. If Farm Crop damage >= 80%, advise PMFBY).
         
         ### ૩. હવામાન અને છંટકાવની સલાહ ({st.session_state.live_location}):
         ({weather_details}. Based on this, explain clearly when is the exact best time to spray).
         
-        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ખેતી ઉપાય (ફરજિયાત ૩ થી ૪ ઉપાયો):
-        (GIVE HIGHEST PRIORITY to Organic/Natural farming. You MUST provide AT LEAST 3 to 4 DIFFERENT natural/organic remedies so the farmer has multiple options. Explain EXACTLY how to make and mix each one. 
-        IF 'Farm Crop': Dosage MUST be explained for a 15-liter spray pump. IF 'Garden Plant': 1-Liter bottle).
+        ### ૪. પ્રાકૃતિક/ઓર્ગેનિક ખેતી ઉપાય (ફરજિયાત ૩ થી ૪ ઉપાયો - ૧૫ લિટર પંપના માપ સાથે):
+        (GIVE HIGHEST PRIORITY to Organic/Natural farming. You MUST provide AT LEAST 3 to 4 DIFFERENT natural/organic remedies so the farmer has multiple options. 
+        CRITICAL: For ALL organic remedies, you MUST provide the exact mixing ratio for a standard 15-LITER SPRAY PUMP. Do not give 1-liter measurements unless it is an indoor home plant. Explain EXACTLY how to make and mix each one.)
         
-        ### ૫. રાસાયણિક દવા (વૈકલ્પિક - માત્ર ઈમરજન્સી માટે):
-        (Provide specific chemical formulation and exact dosage per 15-Liters).
+        ### ૫. રાસાયણિક દવા (વૈકલ્પિક - ૨ થી ૩ વિકલ્પો અને ખર્ચની બચતની સરખામણી):
+        (Provide AT LEAST 2 to 3 DIFFERENT chemical options (brands/molecules) for the same disease. 
+        CRITICAL: Compare their estimated market prices. Explain to the farmer how choosing a generic/cheaper alternative with the SAME technical content can SAVE them money compared to expensive branded medicines. Provide exact dosage per 15-Liters for all options).
         
         ### ૬. દવાની ગણતરી (ખેડૂતનું દેશી માપ): 
         (CRITICAL: IF it is a 'Farm Crop', you MUST strictly state that for "1 Bigha (૧ વીઘા = ૨૪ ગુંઠા) land, 3 pumps of 15-liters are required". Explain safety precautions thoroughly).
