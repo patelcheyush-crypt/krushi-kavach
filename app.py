@@ -5,7 +5,6 @@ from gtts import gTTS
 import io
 import urllib.parse
 import re
-import time
 
 # --- પેજ સેટિંગ ---
 st.set_page_config(page_title="AI કૃષિ કવચ", page_icon="🛡️", layout="centered", initial_sidebar_state="collapsed")
@@ -63,7 +62,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- વિજ્ઞાન મેળાની વિગતો (તમારો નવો સુધારો: સ્થળ, તારીખ અને નામ) ---
+# --- વિજ્ઞાન મેળાની વિગતો ---
 st.markdown("""
 <div class="info-card">
     <div class="info-title">શ્રી ચિત્રાસર પ્રાથમિક શાળા</div>
@@ -80,20 +79,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- મલ્ટીપલ API Key સેટઅપ (સ્માર્ટ રોટેશન સિસ્ટમ) ---
+# --- OPENAI API KEY SETUP ---
 try:
-    if "GEMINI_API_KEYS" in st.secrets:
-        api_keys_list = [k.strip() for k in st.secrets["GEMINI_API_KEYS"].split(",") if k.strip()]
-    elif "GEMINI_API_KEY" in st.secrets:
-        api_keys_list = [st.secrets["GEMINI_API_KEY"]]
-    else:
-        api_keys_list = []
-        
-    if not api_keys_list:
-        st.error("⚠️ API Key મળતી નથી! કૃપા કરીને સિક્યોરિટી સેટિંગમાં 'GEMINI_API_KEYS' ઉમેરો.")
-        st.stop()
-except Exception as e:
-    st.error("⚠️ સિક્યોરિટી સેટિંગમાં ભૂલ છે! મહેરબાની કરીને API Key ચેક કરો.")
+    API_KEY = st.secrets["OPENAI_API_KEY"]
+except:
+    st.error("⚠️ API Key મળતી નથી! કૃપા કરીને Streamlit ના સિક્યોરિટી સેટિંગમાં 'OPENAI_API_KEY' ઉમેરો.")
     st.stop()
 
 # --- ઓટોમેટિક લાઈવ લોકેશન ---
@@ -122,7 +112,7 @@ st.info("💡 શ્રેષ્ઠ નિદાન માટે: (૧) બી�
 uploaded_files = st.file_uploader("અહીં ક્લિક કરી ફોટો પાડો", type=["jpg", "jpeg", "png"], accept_multiple_files=True, label_visibility="collapsed")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- પ્રોસેસિંગ ---
+# --- પ્રોસેસિંગ (ChatGPT GPT-4o-Mini) ---
 if uploaded_files:
     image_preview = st.empty()
     with image_preview.container():
@@ -137,14 +127,14 @@ if uploaded_files:
         scanner_placeholder = st.empty()
         
         first_file = uploaded_files[0]
-        base64_img = base64.b64encode(first_file.getvalue()).decode('utf-8')
-        mime_type = "image/jpeg" if first_file.name.endswith(('jpg', 'jpeg')) else "image/png"
+        base64_img_preview = base64.b64encode(first_file.getvalue()).decode('utf-8')
+        mime_type_preview = "image/jpeg" if first_file.name.endswith(('jpg', 'jpeg')) else "image/png"
         
         scanner_html = f"""
         <div class='custom-card' style='text-align:center;'>
-            <div class='section-title'>🔍 AI સ્કેન કરી રહ્યું છે...</div>
+            <div class='section-title'>🔍 ChatGPT સ્કેન કરી રહ્યું છે...</div>
             <div class="scanner-container" style="max-width: 400px; margin: 0 auto;">
-                <img src="data:{mime_type};base64,{base64_img}" class="scanner-img" />
+                <img src="data:{mime_type_preview};base64,{base64_img_preview}" class="scanner-img" />
                 <div class="scanner-line"></div>
             </div>
             <p style='color:#1b5e20; margin-top:10px;'><b>{len(uploaded_files)} ફોટાઓનું</b> વિશ્લેષણ થઈ રહ્યું છે...</p>
@@ -205,108 +195,97 @@ if uploaded_files:
         [YT_SEARCH: Keyword1, Keyword2] (Provide 1 or 2 organic method names you just suggested, comma separated)
         """
 
-        contents_parts = [{"text": smart_prompt}]
-        
-        # લૂપ દ્વારા બધા જ (૧, ૨ કે ૩) ફોટા AI ને મોકલવામાં આવશે
+        # OpenAI માટેનો ડેટા ફોર્મેટ (Vision Support)
+        contents_parts = [{"type": "text", "text": smart_prompt}]
         for file in uploaded_files:
-            base64_image = base64.b64encode(file.getvalue()).decode('utf-8')
-            mime_type = "image/jpeg" if file.name.endswith(('jpg', 'jpeg')) else "image/png"
-            contents_parts.append({"inlineData": {"mimeType": mime_type, "data": base64_image}})
+            b64_img = base64.b64encode(file.getvalue()).decode('utf-8')
+            m_type = "image/jpeg" if file.name.endswith(('jpg', 'jpeg')) else "image/png"
+            contents_parts.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:{m_type};base64,{b64_img}"}
+            })
 
-        data = {"contents": [{"parts": contents_parts}]}
-        headers = {'Content-Type': 'application/json'}
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "user", "content": contents_parts}],
+            "max_tokens": 1500
+        }
         
-        success = False
-        error_msg = ""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {API_KEY}"
+        }
         
-        # 🟢 મલ્ટીપલ API Key લૂપ (જે મોડેલ વ્યવસ્થિત ચાલે છે: gemini-3.8-flash)
-        for current_key in api_keys_list:
-            if success:
-                break
+        url = "https://api.openai.com/v1/chat/completions"
+        
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            if response.status_code == 200:
+                text_response = response.json()['choices'][0]['message']['content']
+                scanner_placeholder.empty()
                 
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={current_key}"
-            
-            for attempt in range(2):
-                try:
-                    response = requests.post(url, headers=headers, json=data)
-                    if response.status_code == 200:
-                        success = True
-                        break
-                    elif response.status_code == 429:
-                        error_msg = "પહેલી API Key ની લિમિટ પૂરી, બીજી કી પર સ્વિચ કરી રહ્યું છે..."
-                        break
-                    else:
-                        error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
-                        time.sleep(1.5)
-                except Exception as e:
-                    error_msg = str(e)
-                    time.sleep(1.5)
-        
-        if success:
-            text_response = response.json()['candidates'][0]['content']['parts'][0]['text']
+                yt_keywords = []
+                yt_match = re.search(r'\[YT_SEARCH:\s*(.*?)\]', text_response)
+                if yt_match:
+                    yt_keywords = [kw.strip() for kw in yt_match.group(1).split(',') if kw.strip()]
+                    text_response = re.sub(r'\[YT_SEARCH:\s*.*?\]', '', text_response).strip()
+                
+                clean_text_for_sharing = re.sub(r'<[^>]+>', '', text_response).strip()
+                whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location})* 🛡️\n\n{clean_text_for_sharing}\n\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
+                
+                st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
+                
+                if voice_enabled:
+                    audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮📞]', ' ', clean_text_for_sharing)
+                    audio_text = f"નમસ્કાર ખેડૂત મિત્ર. તમારો રિપોર્ટ આ મુજબ છે: {audio_clean_text}"
+                    try:
+                        tts = gTTS(text=audio_text, lang=target_lang_code)
+                        fp = io.BytesIO()
+                        tts.write_to_fp(fp)
+                        fp.seek(0)
+                        audio_b64 = base64.b64encode(fp.read()).decode()
+                        st.markdown(f'''<audio autoplay controls><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>''', unsafe_allow_html=True)
+                    except:
+                        pass
+                
+                st.markdown("<div class='report-greeting'>✅ તમારો સ્માર્ટ રિપોર્ટ તૈયાર છે:</div>", unsafe_allow_html=True)
+                st.markdown(text_response)
+                
+                # 🌟 સ્માર્ટ ડેશબોર્ડ (તમામ રંગીન બટન સાથે) 🌟
+                st.markdown("---")
+                st.markdown("<h4 style='text-align: center; color: #1b5e20;'>🛠️ ખેડૂત હેલ્પલાઇન અને એક્શન ડેશબોર્ડ</h4>", unsafe_allow_html=True)
+                
+                html_buttons = '<div class="action-container">'
+                encoded_msg = urllib.parse.quote(whatsapp_msg)
+                html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp માં રિપોર્ટ મોકલો</a>'
+                
+                for kw in yt_keywords:
+                    yt_query = urllib.parse.quote(f"{kw} banavvani rit")
+                    html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} બનાવતા શીખો (વિડીયો)</a>'
+                
+                maps_url = "https://www.google.com/maps/search/Agro+center+near+me"
+                html_buttons += f'<a href="{maps_url}" target="_blank" class="action-btn btn-map">📍 નજીકનો એગ્રો સ્ટોર શોધો</a>'
+                html_buttons += f'<a href="tel:1551" class="action-btn btn-call">📞 શું કોલ કરવો છે? 1551 ડાયલ કરો</a>'
+                html_buttons += f'<a href="https://pmfby.gov.in/" target="_blank" class="action-btn btn-pm">🌾 પાક વીમા યોજના (PMFBY)</a>'
+                html_buttons += '</div>'
+                
+                st.markdown(html_buttons, unsafe_allow_html=True)
+                
+                st.write("") 
+                st.download_button(
+                    label="📄 આ રિપોર્ટ મોબાઈલમાં સેવ કરો (Download TXT)",
+                    data=whatsapp_msg,
+                    file_name="Krushi_Kavach_Report.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+                
+                st.markdown("</div>", unsafe_allow_html=True)
+                st.balloons()
+            else:
+                scanner_placeholder.empty()
+                error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
+                st.error(f"⚠️ OpenAI સર્વર એરર: {error_msg}")
+        except Exception as e:
             scanner_placeholder.empty()
-            
-            yt_keywords = []
-            yt_match = re.search(r'\[YT_SEARCH:\s*(.*?)\]', text_response)
-            if yt_match:
-                yt_keywords = [kw.strip() for kw in yt_match.group(1).split(',') if kw.strip()]
-                text_response = re.sub(r'\[YT_SEARCH:\s*.*?\]', '', text_response).strip()
-            
-            clean_text_for_sharing = re.sub(r'<[^>]+>', '', text_response).strip()
-            whatsapp_msg = f"🛡️ *AI કૃષિ કવચ - સ્માર્ટ રિપોર્ટ ({st.session_state.live_location})* 🛡️\n\n{clean_text_for_sharing}\n\nસૌજન્ય: ચિત્રાસર પ્રાથમિક શાળા પ્રોજેક્ટ"
-            
-            st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
-            
-            if voice_enabled:
-                audio_clean_text = re.sub(r'[*#_🚨💡🌿🧪🌾📊🌦️🧮📞]', ' ', clean_text_for_sharing)
-                audio_text = f"નમસ્કાર ખેડૂત મિત્ર. તમારો રિપોર્ટ આ મુજબ છે: {audio_clean_text}"
-                try:
-                    tts = gTTS(text=audio_text, lang=target_lang_code)
-                    fp = io.BytesIO()
-                    tts.write_to_fp(fp)
-                    fp.seek(0)
-                    audio_b64 = base64.b64encode(fp.read()).decode()
-                    st.markdown(f'''<audio autoplay controls><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>''', unsafe_allow_html=True)
-                except:
-                    pass
-            
-            st.markdown("<div class='report-greeting'>✅ તમારો સ્માર્ટ રિપોર્ટ તૈયાર છે:</div>", unsafe_allow_html=True)
-            st.markdown(text_response)
-            
-            # 🌟 સ્માર્ટ ડેશબોર્ડ (તમામ રંગીન બટન સાથે) 🌟
-            st.markdown("---")
-            st.markdown("<h4 style='text-align: center; color: #1b5e20;'>🛠️ ખેડૂત હેલ્પલાઇન અને એક્શન ડેશબોર્ડ</h4>", unsafe_allow_html=True)
-            
-            html_buttons = '<div class="action-container">'
-            
-            encoded_msg = urllib.parse.quote(whatsapp_msg)
-            html_buttons += f'<a href="https://api.whatsapp.com/send?text={encoded_msg}" target="_blank" class="action-btn btn-wa">💬 WhatsApp માં રિપોર્ટ મોકલો</a>'
-            
-            for kw in yt_keywords:
-                yt_query = urllib.parse.quote(f"{kw} banavvani rit")
-                html_buttons += f'<a href="https://www.youtube.com/results?search_query={yt_query}" target="_blank" class="action-btn btn-yt">📺 {kw} બનાવતા શીખો (વિડીયો)</a>'
-            
-            maps_url = "https://www.google.com/maps/search/Agro+center+near+me"
-            html_buttons += f'<a href="{maps_url}" target="_blank" class="action-btn btn-map">📍 નજીકનો એગ્રો સ્ટોર શોધો</a>'
-            
-            html_buttons += f'<a href="tel:1551" class="action-btn btn-call">📞 શું કોલ કરવો છે? 1551 ડાયલ કરો</a>'
-            html_buttons += f'<a href="https://pmfby.gov.in/" target="_blank" class="action-btn btn-pm">🌾 પાક વીમા યોજના (PMFBY)</a>'
-            
-            html_buttons += '</div>'
-            st.markdown(html_buttons, unsafe_allow_html=True)
-            
-            st.write("") 
-            st.download_button(
-                label="📄 આ રિપોર્ટ મોબાઈલમાં સેવ કરો (Download TXT)",
-                data=whatsapp_msg,
-                file_name="Krushi_Kavach_Report.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-            
-            st.markdown("</div>", unsafe_allow_html=True)
-            st.balloons()
-        else:
-            scanner_placeholder.empty()
-            st.error(f"⚠️ ગૂગલ સર્વર એરર: {error_msg}")
-            st.info("કૃપા કરીને 30 સેકન્ડ પછી ફરીથી સ્કેન કરો. (અથવા નવી API Key નાખો).")
+            st.error(f"⚠️ ઇન્ટરનેટ કનેક્શન એરર: {e}")
