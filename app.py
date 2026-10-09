@@ -72,14 +72,24 @@ except:
     st.error("⚠️ API Key મળતી નથી! કૃપા કરીને Streamlit ના સિક્યોરિટી સેટિંગમાં 'OPENAI_API_KEY' ઉમેરો.")
     st.stop()
 
-if 'live_location' not in st.session_state:
-    st.session_state.live_location = "Location Not Found"
+# 🌟 એડવાન્સ ડબલ-ચેક ઓટોમેટિક લોકેશન સિસ્ટમ 🌟
+def get_auto_location():
     try:
-        ip_res = requests.get('http://ip-api.com/json/', timeout=3).json()
-        if ip_res['status'] == 'success':
-            st.session_state.live_location = ip_res.get('city', ip_res.get('regionName', 'Location Not Found'))
+        res = requests.get('https://ipapi.co/json/', timeout=4).json()
+        if 'city' in res and res['city']:
+            return f"{res['city']}, {res['region']}"
     except:
         pass
+    try:
+        res = requests.get('http://ip-api.com/json/', timeout=4).json()
+        if res.get('status') == 'success':
+            return f"{res.get('city')}, {res.get('regionName')}"
+    except:
+        pass
+    return "Bhavnagar, Gujarat" # Default Fallback
+
+if 'live_location' not in st.session_state:
+    st.session_state.live_location = get_auto_location()
 
 # 🌟 ભાષા પસંદગી અને ડાયનેમિક UI ડિક્શનરી 🌟
 languages = {
@@ -91,28 +101,25 @@ selected_lang = st.selectbox("તમારી ભાષા પસંદ કર�
 target_lang_code = languages[selected_lang]
 target_lang_name = selected_lang.split(' ')[0]
 
-# --- ડાયનેમિક UI મેનુ માસ્ટર ફાઈલ ---
 ui_dict = {
-    "gu": {"loc": "📍 લાઈવ લોકેશન:", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
-    "hi": {"loc": "📍 लाइव लोकेशन:", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
-    "en": {"loc": "📍 Live Location:", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
+    "gu": {"loc": "📍 તમારું લોકેશન (જો ખોટું હોય તો અહીં સુધારો):", "photo": "📸 પાક/છોડનો ફોટો પાડો", "help": "💡 શ્રેષ્ઠ નિદાન માટે: બીમાર પાંદડાનો અને આખા છોડનો એમ ૨-૩ ફોટા પાડો.", "btn_up": "અહીં ક્લિક કરી ફોટો પાડો", "btn_scan": "🚀 વિશ્લેષણ કરો", "scan_msg": "🔍 AI સ્કેન કરી રહ્યું છે...", "dash": "🛠️ ખેડૂત/ગાર્ડન હેલ્પલાઇન ડેશબોર્ડ", "wa": "💬 WhatsApp માં શેર કરો", "agro": "📍 નજીકનો એગ્રો/નર્સરી સ્ટોર", "call": "📞 કિસાન કોલ સેન્ટર", "pm": "🌾 પાક વીમા યોજના", "dl": "📄 રિપોર્ટ સેવ કરો", "audio": "🔊 ઓડિયો રિપોર્ટ સાંભળો", "visitors": "👁️ કુલ મુલાકાતીઓ:"},
+    "hi": {"loc": "📍 आपकी लोकेशन (गलत हो तो सुधारें):", "photo": "📸 फसल/पौधे की फोटो लें", "help": "💡 सर्वोत्तम निदान के लिए: बीमार पत्ते और पूरे पौधे की 2-3 फोटो लें।", "btn_up": "फोटो अपलोड करने के लिए क्लिक करें", "btn_scan": "🚀 विश्लेषण करें", "scan_msg": "🔍 AI स्कैन कर रहा है...", "dash": "🛠️ हेल्पलाइन डैशबोर्ड", "wa": "💬 WhatsApp पर शेयर करें", "agro": "📍 नजदीकी एग्रो/नर्सरी स्टोर", "call": "📞 किसान कॉल सेंटर", "pm": "🌾 फसल बीमा योजना", "dl": "📄 रिपोर्ट सेव करें", "audio": "🔊 ऑडियो रिपोर्ट सुनें", "visitors": "👁️ कुल विज़िटर:"},
+    "en": {"loc": "📍 Your Location (Edit if incorrect):", "photo": "📸 Take Crop/Plant Photo", "help": "💡 For best diagnosis: Take 2-3 photos including a close-up and full plant.", "btn_up": "Click here to upload photo", "btn_scan": "🚀 Analyze Plant", "scan_msg": "🔍 AI is scanning...", "dash": "🛠️ Action Dashboard", "wa": "💬 Share on WhatsApp", "agro": "📍 Find Agro/Nursery Store", "call": "📞 Kisan Call Center", "pm": "🌾 Crop Insurance (PMFBY)", "dl": "📄 Save Report", "audio": "🔊 Enable Audio Report", "visitors": "👁️ Total Visitors:"}
 }
-
-# બીજી ભાષાઓ માટે અંગ્રેજી ફોલબેક
 ui = ui_dict.get(target_lang_code, ui_dict["en"])
 
 st.markdown("<div class='custom-card'>", unsafe_allow_html=True)
-st.success(f"{ui['loc']} **{st.session_state.live_location}**")
+# 🌟 એડિટેબલ ટેક્સ્ટ બોક્સ (ખેડૂત જાતે લોકેશન સુધારી શકશે) 🌟
+st.session_state.live_location = st.text_input(ui['loc'], value=st.session_state.live_location)
+
 voice_enabled = st.toggle(ui['audio'], value=True)
 
-# 🌟 લાઈવ વિઝિટર કાઉન્ટર 🌟
 st.markdown(f"""
 <div style='margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c8e6c9; text-align: center;'>
     <span style='font-weight: bold; color: #1b5e20; margin-right: 10px;'>{ui['visitors']}</span>
     <img src="https://api.visitorbadge.io/api/visitors?path=ai_krushi_kavach_project_2026&countColor=%232e7d32" alt="Visitor Count" style="vertical-align: middle;">
 </div>
 """, unsafe_allow_html=True)
-
 st.markdown("</div>", unsafe_allow_html=True)
 
 # --- ફોટો અપલોડ ---
@@ -150,8 +157,8 @@ if uploaded_files:
         """
         scanner_placeholder.markdown(scanner_html, unsafe_allow_html=True)
 
-        weather_details = "Location not found, weather data unavailable."
-        if st.session_state.live_location != "Location Not Found":
+        weather_details = "લોકેશનની ચોક્કસ માહિતી ઉપલબ્ધ નથી."
+        if st.session_state.live_location and st.session_state.live_location.strip() != "":
             try:
                 geo_res = requests.get(f"https://geocoding-api.open-meteo.com/v1/search?name={st.session_state.live_location}&count=1", timeout=5).json()
                 if "results" in geo_res and len(geo_res["results"]) > 0:
@@ -167,7 +174,6 @@ if uploaded_files:
             except:
                 pass
 
-        # 🌟 નવો સ્માર્ટ ડ્યુઅલ-મોડ પ્રોમ્પ્ટ (ખેતર અને બગીચા બંને માટે) 🌟
         smart_prompt = f"""
         Analyze ALL provided images together. First, determine if the image is a 'Farm Crop' (ખેતરનો પાક) OR a 'Home/Garden Plant' (ઘર/બગીચાનો છોડ). Provide response STRICTLY in {target_lang_name} language. 
         IMPORTANT FORMATTING RULES: 
