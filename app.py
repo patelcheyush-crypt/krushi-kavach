@@ -288,4 +288,12 @@ if uploaded_files:
                     use_container_width=True
                 )
                 
-                st.markdown("
+                st.markdown("</div>", unsafe_allow_html=True)
+                st.balloons()
+            else:
+                scanner_placeholder.empty()
+                error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
+                st.error(f"⚠️ OpenAI Server Error: {error_msg}")
+        except Exception as e:
+            scanner_placeholder.empty()
+            st.error(f"⚠️ Internet Connection Error: {e}")
